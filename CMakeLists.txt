@@ -10,16 +10,16 @@ find_package(cpprestsdk REQUIRED)
 add_subdirectory(fhir)
 add_subdirectory(nhnfhir)
 
-add_library(libsfmbasisapi SHARED main.cpp)
-set_target_properties(libsfmbasisapi PROPERTIES SOVERSION 1 VERSION 1.0.0)
+add_library(sfmbasisapi SHARED main.cpp)
+set_target_properties(sfmbasisapi PROPERTIES SOVERSION 1 VERSION 1.0.0)
 
-target_link_libraries(libsfmbasisapi PRIVATE libfhir)
-target_include_directories(libsfmbasisapi PRIVATE include)
+target_link_libraries(sfmbasisapi PRIVATE libfhir)
+target_include_directories(sfmbasisapi PRIVATE include)
 
-target_link_libraries(libsfmbasisapi PRIVATE nhnfhir)
-target_link_libraries(libsfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
+target_link_libraries(sfmbasisapi PRIVATE nhnfhir)
+target_link_libraries(sfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
 
-install(TARGETS libsfmbasisapi
+install(TARGETS sfmbasisapi
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin
