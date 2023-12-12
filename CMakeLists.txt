@@ -19,5 +19,12 @@ target_include_directories(libsfmbasisapi PRIVATE include)
 target_link_libraries(libsfmbasisapi PRIVATE nhnfhir)
 target_link_libraries(libsfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
 
+install(TARGETS libsfmbasisapi
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+)
+install(DIRECTORY include/ DESTINATION include/sfmbasisapi)
+
 enable_testing()
 add_subdirectory(tests)
