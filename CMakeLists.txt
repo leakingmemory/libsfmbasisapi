@@ -3,23 +3,21 @@ project(sfmbasisfaker)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_options(-fPIC)
 
 find_package(cpprestsdk REQUIRED)
 
 add_subdirectory(fhir)
-add_subdirectory(webserver)
-add_subdirectory(controllers)
 add_subdirectory(nhnfhir)
 
-add_executable(sfmbasisfaker main.cpp)
+add_library(libsfmbasisapi SHARED main.cpp)
+set_target_properties(libsfmbasisapi PROPERTIES SOVERSION 1 VERSION 1.0.0)
 
-target_link_libraries(sfmbasisfaker PRIVATE libfhir)
-target_include_directories(sfmbasisfaker PRIVATE include)
+target_link_libraries(libsfmbasisapi PRIVATE libfhir)
+target_include_directories(libsfmbasisapi PRIVATE include)
 
-target_link_libraries(sfmbasisfaker PRIVATE webserver)
-target_link_libraries(sfmbasisfaker PRIVATE controllers)
-target_link_libraries(sfmbasisfaker PRIVATE nhnfhir)
-target_link_libraries(sfmbasisfaker PRIVATE cpprestsdk::cpprest -lcrypto)
+target_link_libraries(libsfmbasisapi PRIVATE nhnfhir)
+target_link_libraries(libsfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
 
 enable_testing()
 add_subdirectory(tests)
