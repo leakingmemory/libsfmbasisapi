@@ -23,6 +23,7 @@ void FhirBundle::AddEntry(FhirBundleEntry &&entry) {
 
 web::json::value FhirBundle::ToJson() const {
     auto obj = Fhir::ToJson();
+    obj["resourceType"] = web::json::value::string("Bundle");
     if (!type.empty()) {
         obj["type"] = web::json::value::string(type);
     }

@@ -58,6 +58,7 @@ FhirMedication FhirMedication::Parse(const web::json::value &obj) {
 
 web::json::value FhirMedication::ToJson() const {
     web::json::value val = Fhir::ToJson();
+    val["resourceType"] = web::json::value::string("Medication");
     if (code.IsSet()) {
         val["code"] = code.ToJson();
     }

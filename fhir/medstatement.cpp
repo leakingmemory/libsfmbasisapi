@@ -6,6 +6,7 @@
 
 web::json::value FhirMedicationStatement::ToJson() const {
     auto obj = Fhir::ToJson();
+    obj["resourceType"] = web::json::value::string("MedicationStatement");
     if (medicationReference.IsSet()) {
         obj["medicationReference"] = medicationReference.ToJson();
     }

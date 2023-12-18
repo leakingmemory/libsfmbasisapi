@@ -19,6 +19,7 @@ web::json::value FhirParameters::ToJson() const {
     for (const auto &parameter : parameters) {
         arr[i++] = parameter.ToJson();
     }
+    obj["resourceType"] = web::json::value::string("Parameters");
     obj["parameter"] = arr;
     return obj;
 }

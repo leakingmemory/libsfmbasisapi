@@ -6,6 +6,7 @@
 
 web::json::value FhirOrganization::ToJson() const {
     auto obj = Fhir::ToJson();
+    obj["resourceType"] = web::json::value::string("Organization");
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
         typeof(identifiers.size()) i = 0;

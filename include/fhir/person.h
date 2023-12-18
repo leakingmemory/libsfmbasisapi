@@ -40,11 +40,13 @@ public:
 class FhirPatient : public FhirPerson {
 public:
     constexpr FhirPatient() : FhirPerson("Patient") {}
+    FhirPatient(const FhirPerson &person) : FhirPerson(person) {}
 };
 
 class FhirPractitioner : public FhirPerson {
 public:
     constexpr FhirPractitioner() : FhirPerson("Practitioner") {}
+    FhirPractitioner(const FhirPerson &person) : FhirPerson(person) {}
 };
 
 #endif //SFMBASISFAKER_PERSON_H

@@ -36,3 +36,10 @@ add_test(NAME ParseGetmedReq COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/
 add_test(NAME ParseGetmedResp COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/magistral/magistral-getmed-response.json" response)
 add_test(NAME ParseSendmedReq COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/requests/sendmed.json" sendmedrequest)
 add_test(NAME ParseSendmedResp COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/sendmed.json" sendmedresponse)
+
+add_executable(fhirResourceTypeTest assert.cpp fhirResourceType.cpp)
+target_include_directories(fhirResourceTypeTest PRIVATE ../include)
+target_link_libraries(fhirResourceTypeTest PRIVATE libfhir)
+target_link_libraries(fhirResourceTypeTest PRIVATE cpprestsdk::cpprest -lcrypto)
+
+add_test(NAME FhirResourceTypeTest COMMAND fhirResourceTypeTest)
