@@ -59,9 +59,9 @@ private:
 protected:
     bool ParseInline(const web::json::value &json);
 public:
-    constexpr Fhir() : resourceType() {}
-    constexpr explicit Fhir(const std::string &resourceType) : resourceType(resourceType) {}
-    constexpr explicit Fhir(std::string &&resourceType) : resourceType(std::move(resourceType)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING Fhir() : resourceType() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit Fhir(const std::string &resourceType) : resourceType(resourceType) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit Fhir(std::string &&resourceType) : resourceType(std::move(resourceType)) {}
     web::json::value ToJson() const;
     static std::shared_ptr<Fhir> Parse(const web::json::value &obj);
     virtual std::string GetDisplay() const;

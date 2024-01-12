@@ -15,7 +15,7 @@ private:
     std::string type{};
     int total{0};
 public:
-    constexpr FhirBundle() : Fhir("Bundle") {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirBundle() : Fhir("Bundle") {}
     void SetType(const std::string &type) {
         this->type = type;
     }

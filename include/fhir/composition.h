@@ -19,7 +19,7 @@ private:
     std::string title{};
     std::string confidentiality{};
 public:
-    constexpr FhirComposition() : Fhir("Composition") {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirComposition() : Fhir("Composition") {}
     [[nodiscard]] FhirIdentifier GetIdentifier() const { return identifier; }
     [[nodiscard]] FhirCodeableConcept GetType() const { return type; }
     [[nodiscard]] FhirReference GetSubject() const { return subject; }

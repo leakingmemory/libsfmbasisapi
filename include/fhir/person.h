@@ -17,8 +17,8 @@ private:
     std::string birthDate{};
     bool active{false};
 public:
-    constexpr FhirPerson() : Fhir() {}
-    constexpr FhirPerson(const std::string &resourceType) : Fhir(resourceType) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirPerson() : Fhir() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirPerson(const std::string &resourceType) : Fhir(resourceType) {}
     [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
     [[nodiscard]] std::vector<FhirName> GetName() const { return name; }
     [[nodiscard]] std::vector<FhirAddress> GetAddress() const { return address; }
@@ -39,13 +39,13 @@ public:
 
 class FhirPatient : public FhirPerson {
 public:
-    constexpr FhirPatient() : FhirPerson("Patient") {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirPatient() : FhirPerson("Patient") {}
     FhirPatient(const FhirPerson &person) : FhirPerson(person) {}
 };
 
 class FhirPractitioner : public FhirPerson {
 public:
-    constexpr FhirPractitioner() : FhirPerson("Practitioner") {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirPractitioner() : FhirPerson("Practitioner") {}
     FhirPractitioner(const FhirPerson &person) : FhirPerson(person) {}
 };
 

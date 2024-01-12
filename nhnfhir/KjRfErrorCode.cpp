@@ -4,7 +4,7 @@
 
 #include <nhnfhir/KjRfErrorCode.h>
 
-constexpr std::vector<FhirCoding> Coding(std::string &&system, std::string &&code, std::string &&name) {
+LIBSFMBASISAPI_CONSTEXPR_STRING std::vector<FhirCoding> Coding(std::string &&system, std::string &&code, std::string &&name) {
     std::vector<FhirCoding> codings{};
     codings.emplace_back(system, code, name);
     return codings;
