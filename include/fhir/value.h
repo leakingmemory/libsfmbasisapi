@@ -11,9 +11,9 @@ class FhirString : public FhirValue {
 private:
     std::string value;
 public:
-    constexpr FhirString() noexcept : value() {}
-    explicit constexpr FhirString(const std::string &value) noexcept : value(value) {}
-    explicit constexpr FhirString(std::string &&value) noexcept : value(std::move(value)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirString() noexcept : value() {}
+    explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirString(const std::string &value) noexcept : value(value) {}
+    explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirString(std::string &&value) noexcept : value(std::move(value)) {}
     static std::string PropertyName() {
         return "valueString";
     }
@@ -31,10 +31,10 @@ private:
     std::string code;
     std::string display;
 public:
-    constexpr FhirCoding() : system(), code(), display() {}
-    constexpr FhirCoding(const std::string &system, const std::string &code, const std::string &display) :
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCoding() : system(), code(), display() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCoding(const std::string &system, const std::string &code, const std::string &display) :
         system(system), code(code), display(display) {}
-    constexpr FhirCoding(std::string &&system, std::string &&code, std::string &&display) :
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCoding(std::string &&system, std::string &&code, std::string &&display) :
             system(std::move(system)), code(std::move(code)), display(std::move(display)) {}
     web::json::value ToJson() const override;
     static FhirCoding Parse(const web::json::value &obj);
@@ -54,15 +54,15 @@ private:
     std::vector<FhirCoding> coding;
     std::string text;
 public:
-    constexpr FhirCodeableConcept() : coding(), text() {}
-    constexpr explicit FhirCodeableConcept(const std::vector<FhirCoding> &coding) : coding(coding), text() {}
-    constexpr explicit FhirCodeableConcept(std::vector<FhirCoding> &&coding) : coding(std::move(coding)), text() {}
-    constexpr explicit FhirCodeableConcept(std::vector<FhirCoding> &&coding, std::string &&text) : coding(std::move(coding)), text(std::move(text)) {}
-    constexpr explicit FhirCodeableConcept(const std::string &system, const std::string &code, const std::string &name)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCodeableConcept() : coding(), text() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(const std::vector<FhirCoding> &coding) : coding(coding), text() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(std::vector<FhirCoding> &&coding) : coding(std::move(coding)), text() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(std::vector<FhirCoding> &&coding, std::string &&text) : coding(std::move(coding)), text(std::move(text)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(const std::string &system, const std::string &code, const std::string &name)
     : coding({{system, code, name}}), text() {}
-    constexpr explicit FhirCodeableConcept(std::string &&system, std::string &&code, std::string &&name)
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(std::string &&system, std::string &&code, std::string &&name)
             : coding({{std::move(system), std::move(code), std::move(name)}}), text() {}
-    constexpr explicit FhirCodeableConcept(const std::string &text) : coding(), text(text) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(const std::string &text) : coding(), text(text) {}
     [[nodiscard]] web::json::value ToJson() const override;
     static FhirCodeableConcept Parse(const web::json::value &obj);
     [[nodiscard]] std::vector<FhirCoding> GetCoding() const {
@@ -76,15 +76,30 @@ public:
     }
 };
 
+class FhirCodingValue : public FhirValue, public FhirCoding {
+public:
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCodingValue() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodingValue(const std::string &system, const std::string &code, const std::string &display) : FhirCoding(system, code, display) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodingValue(std::string &&system, std::string &&code, std::string &&display) : FhirCoding(std::move(system), std::move(code), std::move(display)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodingValue(const FhirCoding &cc) : FhirCoding(cc) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodingValue(FhirCoding &&cc) : FhirCoding(std::move(cc)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING static std::string PropertyName() {
+        return "valueCoding";
+    }
+    std::string GetPropertyName() const override;
+    [[nodiscard]] web::json::value ToJson() const override;
+    static std::shared_ptr<FhirCodingValue> Parse(const web::json::value &obj);
+};
+
 class FhirCodeableConceptValue : public FhirValue, public FhirCodeableConcept {
 public:
-    FhirCodeableConceptValue() {}
-    explicit FhirCodeableConceptValue(const std::vector<FhirCoding> &coding) : FhirCodeableConcept(coding) {}
-    explicit FhirCodeableConceptValue(std::vector<FhirCoding> &&coding) : FhirCodeableConcept(coding) {}
-    explicit FhirCodeableConceptValue(const std::string &text) : FhirCodeableConcept(text) {}
-    explicit FhirCodeableConceptValue(const FhirCodeableConcept &cc) : FhirCodeableConcept(cc) {}
-    explicit FhirCodeableConceptValue(FhirCodeableConcept &&cc) : FhirCodeableConcept(std::move(cc)) {}
-    static std::string PropertyName() {
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCodeableConceptValue() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(const std::vector<FhirCoding> &coding) : FhirCodeableConcept(coding) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(std::vector<FhirCoding> &&coding) : FhirCodeableConcept(coding) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(const std::string &text) : FhirCodeableConcept(text) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(const FhirCodeableConcept &cc) : FhirCodeableConcept(cc) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(FhirCodeableConcept &&cc) : FhirCodeableConcept(std::move(cc)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING static std::string PropertyName() {
         return "valueCodeableConcept";
     }
     std::string GetPropertyName() const override;
@@ -98,8 +113,8 @@ private:
     long milliValue;
     bool isSet;
 public:
-    FhirQuantity() : unit(), milliValue(0), isSet(false) {}
-    FhirQuantity(double value, const std::string &unit) : unit(unit), milliValue((long) floor(value * ((double)1000.0))), isSet(true) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirQuantity() : unit(), milliValue(0), isSet(false) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirQuantity(double value, const std::string &unit) : unit(unit), milliValue((long) floor(value * ((double)1000.0))), isSet(true) {}
     [[nodiscard]] std::string GetUnit() const {
         return unit;
     }
@@ -118,10 +133,10 @@ private:
     FhirQuantity numerator;
     FhirQuantity denominator;
 public:
-    FhirRatio() : numerator(), denominator() {}
-    FhirRatio(const FhirQuantity &numerator, const FhirQuantity &denominator)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirRatio() : numerator(), denominator() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirRatio(const FhirQuantity &numerator, const FhirQuantity &denominator)
             : numerator(numerator), denominator(denominator) {}
-    FhirRatio(FhirQuantity &&numerator, FhirQuantity &&denominator)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirRatio(FhirQuantity &&numerator, FhirQuantity &&denominator)
             : numerator(std::move(numerator)), denominator(std::move(denominator)) {}
     [[nodiscard]] FhirQuantity GetNumerator() const {
         return numerator;
@@ -136,35 +151,6 @@ public:
     static FhirRatio Parse(const web::json::value &obj);
 };
 
-class FhirReference : public FhirObject {
-private:
-    std::string reference;
-    std::string type;
-    std::string display;
-public:
-    constexpr FhirReference() : reference(), type(), display() {}
-    constexpr FhirReference(const std::string &reference, const std::string &type, const std::string &display)
-            : reference(reference), type(type), display(display) {}
-    constexpr FhirReference(std::string &&reference, std::string &&type, std::string &&display)
-            : reference(std::move(reference)), type(std::move(type)), display(std::move(display)) {}
-
-    [[nodiscard]] std::string GetReference() const {
-        return reference;
-    }
-    [[nodiscard]] std::string GetType() const {
-        return type;
-    }
-    [[nodiscard]] std::string GetDisplay() const {
-        return display;
-    }
-    [[nodiscard]] bool IsSet() const {
-        return !reference.empty() || !type.empty() || !display.empty();
-    }
-
-    web::json::value ToJson() const;
-    static FhirReference Parse(const web::json::value &obj);
-};
-
 class FhirIdentifier : public FhirObject {
 private:
     FhirCodeableConcept type;
@@ -172,22 +158,22 @@ private:
     std::string system;
     std::string value;
 public:
-    constexpr FhirIdentifier() : type(), use(), system(), value() {}
-    constexpr FhirIdentifier(const std::string &use, const std::string &value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier() : type(), use(), system(), value() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(const std::string &use, const std::string &value)
             : type(), use(use), system(), value(value) {}
-    constexpr FhirIdentifier(std::string &&use, std::string &&value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(std::string &&use, std::string &&value)
             : type(), use(std::move(use)), system(), value(std::move(value)) {}
-    constexpr FhirIdentifier(const std::string &use, const std::string &system, const std::string &value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(const std::string &use, const std::string &system, const std::string &value)
             : type(), use(use), system(system), value(value) {}
-    constexpr FhirIdentifier(std::string &&use, std::string &&system, std::string &&value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(std::string &&use, std::string &&system, std::string &&value)
             : type(), use(use), system(system), value(value) {}
-    constexpr FhirIdentifier(const FhirCodeableConcept &type, const std::string &use, const std::string &value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(const FhirCodeableConcept &type, const std::string &use, const std::string &value)
         : type(type), use(use), system(), value(value) {}
-    constexpr FhirIdentifier(FhirCodeableConcept &&type, std::string &&use, std::string &&value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(FhirCodeableConcept &&type, std::string &&use, std::string &&value)
         : type(std::move(type)), use(std::move(use)), system(), value(std::move(value)) {}
-    constexpr FhirIdentifier(const FhirCodeableConcept &type, const std::string &use, const std::string &system, const std::string &value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(const FhirCodeableConcept &type, const std::string &use, const std::string &system, const std::string &value)
             : type(type), use(use), system(system), value(value) {}
-    constexpr FhirIdentifier(FhirCodeableConcept &&type, std::string &&use, std::string &&system, std::string &&value)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirIdentifier(FhirCodeableConcept &&type, std::string &&use, std::string &&system, std::string &&value)
             : type(std::move(type)), use(std::move(use)), system(std::move(system)), value(std::move(value)) {}
     [[nodiscard]] std::string GetUse() const {
         return use;
@@ -208,14 +194,48 @@ public:
     static FhirIdentifier Parse(const web::json::value &obj);
 };
 
+class FhirReference : public FhirObject {
+private:
+    FhirIdentifier identifier;
+    std::string reference;
+    std::string type;
+    std::string display;
+public:
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference() : identifier(), reference(), type(), display() {}
+    constexpr FhirReference(const FhirIdentifier &identifier, const std::string &reference, const std::string &type, const std::string &display)
+            : identifier(identifier), reference(reference), type(type), display(display) {}
+    constexpr FhirReference(FhirIdentifier &&identifier, std::string &&reference, std::string &&type, std::string &&display)
+            : identifier(std::move(identifier)), reference(std::move(reference)), type(std::move(type)), display(std::move(display)) {}
+    constexpr FhirReference(const std::string &reference, const std::string &type, const std::string &display)
+            : identifier(), reference(reference), type(type), display(display) {}
+    constexpr FhirReference(std::string &&reference, std::string &&type, std::string &&display)
+            : identifier(), reference(std::move(reference)), type(std::move(type)), display(std::move(display)) {}
+
+    [[nodiscard]] std::string GetReference() const {
+        return reference;
+    }
+    [[nodiscard]] std::string GetType() const {
+        return type;
+    }
+    [[nodiscard]] std::string GetDisplay() const {
+        return display;
+    }
+    [[nodiscard]] bool IsSet() const {
+        return identifier.IsSet() || !reference.empty() || !type.empty() || !display.empty();
+    }
+
+    web::json::value ToJson() const;
+    static FhirReference Parse(const web::json::value &obj);
+};
+
 class FhirLink : public FhirObject {
 private:
     std::string relation;
     std::string url;
 public:
-    FhirLink() : relation(), url() {}
-    FhirLink(const std::string& relation, const std::string& url) : relation(relation), url(url) {}
-    FhirLink(std::string&& relation, std::string&& url) : relation(std::move(relation)), url(std::move(url)) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirLink() : relation(), url() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirLink(const std::string& relation, const std::string& url) : relation(relation), url(url) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirLink(std::string&& relation, std::string&& url) : relation(std::move(relation)), url(std::move(url)) {}
     [[nodiscard]] std::string GetRelation() const {
         return relation;
     }
@@ -235,12 +255,12 @@ private:
     std::string family{};
     std::string given{};
 public:
-    FhirName() : use(), family(), given() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirName() : use(), family(), given() {}
 
-    FhirName(const std::string &use, const std::string &family, const std::string &given)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirName(const std::string &use, const std::string &family, const std::string &given)
     : use(use), family(family), given(given) {}
 
-    FhirName(std::string &&use, std::string &&family, std::string &&given)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirName(std::string &&use, std::string &&family, std::string &&given)
     : use(std::move(use)), family(std::move(family)), given(std::move(given)) {}
 
     [[nodiscard]] std::string GetUse() const {
@@ -268,12 +288,12 @@ private:
     std::string city{};
     std::string postalCode{};
 public:
-    FhirAddress() = default;
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirAddress() = default;
 
-    FhirAddress(const std::vector<std::string> &lines, const std::string &use, const std::string &type, const std::string &city, const std::string &postalCode):
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirAddress(const std::vector<std::string> &lines, const std::string &use, const std::string &type, const std::string &city, const std::string &postalCode):
         lines(lines), use(use), type(type), city(city), postalCode(postalCode) {}
 
-    FhirAddress(std::vector<std::string> &&lines, std::string &&use, std::string &&type, std::string &&city, std::string &&postalCode):
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirAddress(std::vector<std::string> &&lines, std::string &&use, std::string &&type, std::string &&city, std::string &&postalCode):
         lines(std::move(lines)), use(std::move(use)), type(std::move(type)), city(std::move(city)), postalCode(std::move(postalCode)) {}
 
     [[nodiscard]] std::vector<std::string> GetLines() const {
@@ -300,8 +320,8 @@ class FhirDateTimeValue : public FhirValue {
 private:
     std::string dateTime;
 public:
-    FhirDateTimeValue() : dateTime() {}
-    FhirDateTimeValue(const std::string &dateTime) : dateTime(dateTime) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirDateTimeValue() : dateTime() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirDateTimeValue(const std::string &dateTime) : dateTime(dateTime) {}
     [[nodiscard]] std::string GetDateTime() const {
         return dateTime;
     }

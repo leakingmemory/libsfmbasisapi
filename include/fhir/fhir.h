@@ -11,6 +11,23 @@
 #include "extension.h"
 #include "fhirconcepts.h"
 
+class FhirValueException : public std::exception {
+private:
+    std::string property;
+    std::string error;
+    std::string whatStr;
+public:
+    FhirValueException(const std::string &property, const std::string &error)
+    : property(property), error(error), whatStr(error) {
+        whatStr.append(" (");
+        whatStr.append(property);
+        whatStr.append(")");
+    }
+    const char * what() const noexcept override {
+        return whatStr.c_str();
+    }
+};
+
 enum class FhirStatus {
     NOT_SET,
     ACTIVE,

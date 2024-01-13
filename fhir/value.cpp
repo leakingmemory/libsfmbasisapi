@@ -32,7 +32,10 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
     if (propertyName == FhirIntegerValue::PropertyName()) {
         return FhirIntegerValue::Parse(property);
     }
-    throw std::exception();
+    if (propertyName == FhirCodingValue::PropertyName()) {
+        return FhirCodingValue::Parse(property);
+    }
+    throw FhirValueException(propertyName, "Value property not known");
 }
 
 web::json::value FhirCoding::ToJson() const {
@@ -90,6 +93,18 @@ FhirCodeableConcept FhirCodeableConcept::Parse(const web::json::value &obj) {
         text = obj.at("text").as_string();
     }
     return FhirCodeableConcept(std::move(coding), std::move(text));
+}
+
+std::string FhirCodingValue::GetPropertyName() const {
+    return PropertyName();
+}
+
+web::json::value FhirCodingValue::ToJson() const {
+    return FhirCoding::ToJson();
+}
+
+std::shared_ptr<FhirCodingValue> FhirCodingValue::Parse(const web::json::value &obj) {
+    return std::make_shared<FhirCodingValue>(FhirCoding::Parse(obj));
 }
 
 std::string FhirCodeableConceptValue::GetPropertyName() const {
@@ -150,6 +165,9 @@ FhirRatio FhirRatio::Parse(const web::json::value &obj) {
 
 web::json::value FhirReference::ToJson() const {
     auto obj = FhirObject::ToJson();
+    if (identifier.IsSet()) {
+        obj["identifier"] = identifier.ToJson();
+    }
     if (!reference.empty()) {
         obj["reference"] = web::json::value::string(reference);
     }
@@ -163,6 +181,11 @@ web::json::value FhirReference::ToJson() const {
 }
 
 FhirReference FhirReference::Parse(const web::json::value &obj) {
+    FhirIdentifier identifier{};
+    if (obj.has_object_field("identifier")) {
+        identifier = FhirIdentifier::Parse(obj.at("identifier"));
+    }
+
     std::string reference{};
     if (obj.has_string_field("reference")) {
         reference = obj.at("reference").as_string();
@@ -178,7 +201,7 @@ FhirReference FhirReference::Parse(const web::json::value &obj) {
         display = obj.at("display").as_string();
     }
 
-    return {std::move(reference), std::move(type), std::move(display)};
+    return {std::move(identifier), std::move(reference), std::move(type), std::move(display)};
 }
 
 web::json::value FhirIdentifier::ToJson() const {
