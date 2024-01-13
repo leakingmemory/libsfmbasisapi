@@ -6,6 +6,7 @@
 #define SFMBASISFAKER_FHIREXTENDABLE_H
 
 #include "fhirobject.h"
+#include "fhirconcepts.h"
 
 class FhirExtension;
 
@@ -15,7 +16,7 @@ private:
 protected:
     bool ParseInline(const web::json::value &json);
 public:
-    constexpr FhirExtendable() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirExtendable() {}
     web::json::value ToJson() const;
     virtual ~FhirExtendable() = default;
     [[nodiscard]] std::vector<std::shared_ptr<FhirExtension>> GetExtensions() const {
