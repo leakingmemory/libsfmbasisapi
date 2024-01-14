@@ -202,13 +202,13 @@ private:
     std::string display;
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference() : identifier(), reference(), type(), display() {}
-    constexpr FhirReference(const FhirIdentifier &identifier, const std::string &reference, const std::string &type, const std::string &display)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference(const FhirIdentifier &identifier, const std::string &reference, const std::string &type, const std::string &display)
             : identifier(identifier), reference(reference), type(type), display(display) {}
-    constexpr FhirReference(FhirIdentifier &&identifier, std::string &&reference, std::string &&type, std::string &&display)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference(FhirIdentifier &&identifier, std::string &&reference, std::string &&type, std::string &&display)
             : identifier(std::move(identifier)), reference(std::move(reference)), type(std::move(type)), display(std::move(display)) {}
-    constexpr FhirReference(const std::string &reference, const std::string &type, const std::string &display)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference(const std::string &reference, const std::string &type, const std::string &display)
             : identifier(), reference(reference), type(type), display(display) {}
-    constexpr FhirReference(std::string &&reference, std::string &&type, std::string &&display)
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirReference(std::string &&reference, std::string &&type, std::string &&display)
             : identifier(), reference(std::move(reference)), type(std::move(type)), display(std::move(display)) {}
 
     [[nodiscard]] std::string GetReference() const {
