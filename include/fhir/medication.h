@@ -24,6 +24,18 @@ public:
     bool IsActive() const {
         return isActive;
     }
+
+    void SetItemReference(const FhirReference &itemReference) {
+        this->itemReference = itemReference;
+    }
+
+    void SetStrength(const FhirRatio &strength) {
+        this->strength = strength;
+    }
+
+    void SetActive(bool isActive) {
+        this->isActive = isActive;
+    }
 };
 
 class FhirMedication : public Fhir {
@@ -46,6 +58,22 @@ public:
     }
     [[nodiscard]] std::vector<FhirIngredient> GetIngredients() const {
         return ingredients;
+    }
+
+    void SetCode(const FhirCodeableConcept &code) {
+        this->code = code;
+    }
+
+    void SetForm(const FhirCodeableConcept &form) {
+        this->form = form;
+    }
+
+    void SetAmount(const FhirRatio &amount) {
+        this->amount = amount;
+    }
+
+    void SetIngredients(const std::vector<FhirIngredient> &ingredients) {
+        this->ingredients = ingredients;
     }
 };
 

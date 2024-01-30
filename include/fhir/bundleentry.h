@@ -16,7 +16,7 @@ private:
     std::string fullUrl;
     std::shared_ptr<Fhir> resource;
 public:
-    constexpr FhirBundleEntry() : fullUrl(), resource() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirBundleEntry() : fullUrl(), resource() {}
     template <FhirSubclass T> FhirBundleEntry(const std::string &url, const std::shared_ptr<T> &entry)
         : fullUrl(url), resource(entry) {}
     template <FhirSubclass T> FhirBundleEntry(std::string &&url, const std::shared_ptr<T> &entry)
