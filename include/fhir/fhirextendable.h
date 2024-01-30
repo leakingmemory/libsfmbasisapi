@@ -22,6 +22,9 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<FhirExtension>> GetExtensions() const {
         return extensions;
     }
+    void AddExtension(const std::shared_ptr<FhirExtension> &extension) {
+        extensions.emplace_back(extension);
+    }
 };
 
 #endif //SFMBASISFAKER_FHIREXTENDABLE_H
