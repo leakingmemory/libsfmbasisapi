@@ -22,6 +22,19 @@ public:
     std::vector<FhirDosage> GetDosage() const { return dosage; }
     FhirReference GetMedicationReference() const { return medicationReference; }
     FhirReference GetSubject() const { return subject; }
+
+    void AddIdentifier(const FhirIdentifier &identifier) {
+        identifiers.emplace_back(identifier);
+    }
+    void AddDosage(const FhirDosage &dos) {
+        dosage.emplace_back(dos);
+    }
+    void SetMedicationReference(const FhirReference &reference) {
+        medicationReference = reference;
+    }
+    void SetSubject(const FhirReference &reference) {
+        subject = reference;
+    }
 };
 
 #endif //SFMBASISFAKER_MEDSTATEMENT_H
