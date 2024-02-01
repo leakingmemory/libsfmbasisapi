@@ -32,6 +32,9 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
     if (propertyName == FhirIntegerValue::PropertyName()) {
         return FhirIntegerValue::Parse(property);
     }
+    if (propertyName == FhirDecimalValue::PropertyName()) {
+        return FhirDecimalValue::Parse(property);
+    }
     if (propertyName == FhirCodingValue::PropertyName()) {
         return FhirCodingValue::Parse(property);
     }
@@ -419,4 +422,102 @@ std::shared_ptr<FhirIntegerValue> FhirIntegerValue::Parse(const web::json::value
         integerValue->value = obj.as_number().to_int64();
     }
     return integerValue;
+}
+
+constexpr double ceround(double value) {
+    long long int rawIntVal = (long long int) value;
+    double compareVal = rawIntVal;
+    auto diff = value - compareVal;
+    if (diff < 0.5) {
+        return compareVal;
+    } else {
+        return compareVal + 1.0;
+    }
+}
+
+constexpr double ceabs(double value) {
+    if (value < 0.0) {
+        return -value;
+    } else {
+        return value;
+    }
+}
+
+constexpr void DoubleToPrecisionLongLongInt(double value, long long int &output, int &precision) {
+    int p = 0;
+    while (p < 5) {
+        auto rounded = ceround(value);
+        auto loss = ceabs(rounded - value);
+        if (loss < 0.01 || p == 5) {
+            output = (long long int) rounded;
+            precision = p;
+            return;
+        }
+        value *= 10.0;
+        ++p;
+    }
+}
+
+constexpr bool CheckDPLLI(double value, long long int output, int precision) {
+    long long int c_o;
+    int c_p;
+    DoubleToPrecisionLongLongInt(value, c_o, c_p);
+    return (c_o == output && c_p == precision);
+}
+
+static_assert(CheckDPLLI(1.0, 1, 0));
+static_assert(CheckDPLLI(1.1, 11, 1));
+static_assert(CheckDPLLI(1.5, 15, 1));
+static_assert(CheckDPLLI(1.11, 111, 2));
+static_assert(CheckDPLLI(0.1, 1, 1));
+
+constexpr double PrecisionLongLongIntToDouble(long long int value, int precision) {
+    double dval = value;
+    while (precision > 0) {
+        dval /= 10.0;
+        --precision;
+    }
+    return dval;
+}
+
+constexpr bool CheckDPLLI(long long int value, int precision) {
+    double dval = PrecisionLongLongIntToDouble(value, precision);
+    long long int c_o;
+    int c_p;
+    DoubleToPrecisionLongLongInt(dval, c_o, c_p);
+    return (c_o == value && c_p == precision);
+}
+
+static_assert(CheckDPLLI(1, 0));
+static_assert(CheckDPLLI(11, 1));
+static_assert(CheckDPLLI(15, 1));
+static_assert(CheckDPLLI(111, 2));
+static_assert(CheckDPLLI(1, 1));
+
+FhirDecimalValue::FhirDecimalValue(double value) {
+    DoubleToPrecisionLongLongInt(value, this->value, precision);
+}
+
+double FhirDecimalValue::GetValue() const {
+    return PrecisionLongLongIntToDouble(value, precision);
+}
+
+std::string FhirDecimalValue::PropertyName() {
+    return "valueDecimal";
+}
+
+std::string FhirDecimalValue::GetPropertyName() const {
+    return PropertyName();
+}
+
+web::json::value FhirDecimalValue::ToJson() const {
+    return web::json::value::number(GetValue());
+}
+
+std::shared_ptr<FhirDecimalValue> FhirDecimalValue::Parse(const web::json::value &obj) {
+    if (obj.is_number()) {
+        return std::make_shared<FhirDecimalValue>(obj.as_number().to_double());
+    } else {
+        return {};
+    }
 }

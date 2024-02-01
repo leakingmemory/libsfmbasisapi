@@ -361,4 +361,19 @@ public:
     static std::shared_ptr<FhirIntegerValue> Parse(const web::json::value &obj);
 };
 
+class FhirDecimalValue : public FhirValue {
+private:
+    long long int value;
+    int precision;
+public:
+    constexpr FhirDecimalValue() : value(0), precision(0) {}
+    constexpr explicit FhirDecimalValue(long long int value) : value(value), precision(0) {}
+    explicit FhirDecimalValue(double value);
+    double GetValue() const;
+    static std::string PropertyName();
+    std::string GetPropertyName() const override;
+    web::json::value ToJson() const;
+    static std::shared_ptr<FhirDecimalValue> Parse(const web::json::value &obj);
+};
+
 #endif //SFMBASISFAKER_VALUE_H
