@@ -194,7 +194,7 @@ public:
     static FhirIdentifier Parse(const web::json::value &obj);
 };
 
-class FhirReference : public FhirObject {
+class FhirReference : public FhirValue {
 private:
     FhirIdentifier identifier;
     std::string reference;
@@ -223,6 +223,11 @@ public:
     [[nodiscard]] bool IsSet() const {
         return identifier.IsSet() || !reference.empty() || !type.empty() || !display.empty();
     }
+
+    static std::string PropertyName() {
+        return "valueReference";
+    }
+    std::string GetPropertyName() const override;
 
     web::json::value ToJson() const;
     static FhirReference Parse(const web::json::value &obj);

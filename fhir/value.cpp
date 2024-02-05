@@ -38,6 +38,9 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
     if (propertyName == FhirCodingValue::PropertyName()) {
         return FhirCodingValue::Parse(property);
     }
+    if (propertyName == FhirReference::PropertyName()) {
+        return std::make_shared<FhirReference>(FhirReference::Parse(property));
+    }
     throw FhirValueException(propertyName, "Value property not known");
 }
 
@@ -164,6 +167,10 @@ FhirRatio FhirRatio::Parse(const web::json::value &obj) {
         denominator = FhirQuantity::Parse(obj.at("denominator"));
     }
     return {std::move(numerator), std::move(denominator)};
+}
+
+std::string FhirReference::GetPropertyName() const {
+    return PropertyName();
 }
 
 web::json::value FhirReference::ToJson() const {
