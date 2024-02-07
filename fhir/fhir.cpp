@@ -61,6 +61,8 @@ bool Fhir::ParseInline(const web::json::value &json) {
             status = FhirStatus::ACTIVE;
         } else if (s == "final") {
             status = FhirStatus::FINAL;
+        } else if (s == "completed") {
+            status = FhirStatus::COMPLETED;
         } else {
             throw std::exception();
         }
@@ -108,6 +110,9 @@ web::json::value Fhir::ToJson() const {
             break;
         case FhirStatus::FINAL:
             obj["status"] = web::json::value::string("final");
+            break;
+        case FhirStatus::COMPLETED:
+            obj["status"] = web::json::value::string("completed");
             break;
     }
     return obj;
