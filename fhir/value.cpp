@@ -41,6 +41,12 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
     if (propertyName == FhirReference::PropertyName()) {
         return std::make_shared<FhirReference>(FhirReference::Parse(property));
     }
+    if (propertyName == FhirDateValue::PropertyName()) {
+        return FhirDateValue::Parse(property);
+    }
+    if (propertyName == FhirQuantityValue::PropertyName()) {
+        return FhirQuantityValue::Parse(property);
+    }
     throw FhirValueException(propertyName, "Value property not known");
 }
 
@@ -144,6 +150,18 @@ FhirQuantity FhirQuantity::Parse(const web::json::value &obj) {
     } else {
         return {};
     }
+}
+
+std::string FhirQuantityValue::GetPropertyName() const {
+    return PropertyName();
+}
+
+web::json::value FhirQuantityValue::ToJson() const {
+    return FhirQuantity::ToJson();
+}
+
+std::shared_ptr<FhirQuantityValue> FhirQuantityValue::Parse(const web::json::value &obj) {
+    return std::make_shared<FhirQuantityValue>(FhirQuantity::Parse(obj));
 }
 
 web::json::value FhirRatio::ToJson() const {
@@ -524,6 +542,26 @@ web::json::value FhirDecimalValue::ToJson() const {
 std::shared_ptr<FhirDecimalValue> FhirDecimalValue::Parse(const web::json::value &obj) {
     if (obj.is_number()) {
         return std::make_shared<FhirDecimalValue>(obj.as_number().to_double());
+    } else {
+        return {};
+    }
+}
+
+std::string FhirDateValue::PropertyName() {
+    return "valueDate";
+}
+
+std::string FhirDateValue::GetPropertyName() const {
+    return PropertyName();
+}
+
+web::json::value FhirDateValue::ToJson() const {
+    return web::json::value::string(date);
+}
+
+std::shared_ptr<FhirDateValue> FhirDateValue::Parse(const web::json::value &obj) {
+    if (obj.is_string()) {
+        return std::make_shared<FhirDateValue>(obj.as_string());
     } else {
         return {};
     }

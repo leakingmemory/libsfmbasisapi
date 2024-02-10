@@ -128,6 +128,17 @@ public:
     static FhirQuantity Parse(const web::json::value &obj);
 };
 
+class FhirQuantityValue : public FhirValue, FhirQuantity {
+public:
+    explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirQuantityValue(const FhirQuantity &q) : FhirQuantity(q) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING static std::string PropertyName() {
+        return "valueQuantity";
+    }
+    std::string GetPropertyName() const override;
+    [[nodiscard]] web::json::value ToJson() const override;
+    static std::shared_ptr<FhirQuantityValue> Parse(const web::json::value &obj);
+};
+
 class FhirRatio : public FhirObject {
 private:
     FhirQuantity numerator;
@@ -380,5 +391,18 @@ public:
     web::json::value ToJson() const;
     static std::shared_ptr<FhirDecimalValue> Parse(const web::json::value &obj);
 };
+
+class FhirDateValue : public FhirValue {
+private:
+    std::string date;
+public:
+    constexpr FhirDateValue() : date() {}
+    constexpr explicit FhirDateValue(const std::string &date) : date(date) {}
+    static std::string PropertyName();
+    std::string GetPropertyName() const override;
+    web::json::value ToJson() const;
+    static std::shared_ptr<FhirDateValue> Parse(const web::json::value &obj);
+};
+
 
 #endif //SFMBASISFAKER_VALUE_H
