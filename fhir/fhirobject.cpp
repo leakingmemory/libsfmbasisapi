@@ -4,6 +4,11 @@
 
 #include <fhir/fhirobject.h>
 
+void FhirObject::ToJsonInline(web::json::value &json) const {
+}
+
 web::json::value FhirObject::ToJson() const {
-    return web::json::value::object();
+    auto json = web::json::value::object();
+    ToJsonInline(json);
+    return json;
 }

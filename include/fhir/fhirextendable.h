@@ -17,6 +17,7 @@ protected:
     bool ParseInline(const web::json::value &json);
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirExtendable() {}
+    void ToJsonInline(web::json::value &json) const override;
     web::json::value ToJson() const;
     virtual ~FhirExtendable() = default;
     [[nodiscard]] std::vector<std::shared_ptr<FhirExtension>> GetExtensions() const {

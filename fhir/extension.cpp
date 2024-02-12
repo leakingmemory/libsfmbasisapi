@@ -5,10 +5,13 @@
 #include <fhir/extension.h>
 #include <fhir/fhir.h>
 
+void FhirExtension::ToJsonInline(web::json::value &json) const {
+    FhirExtendable::ToJsonInline(json);
+    json["url"] = web::json::value::string(url);
+}
+
 web::json::value FhirExtension::ToJson() const {
-    auto obj = FhirExtendable::ToJson();
-    obj["url"] = web::json::value::string(url);
-    return obj;
+    return FhirExtendable::ToJson();
 }
 
 std::shared_ptr<FhirExtension> FhirExtension::Parse(const web::json::value &obj) {

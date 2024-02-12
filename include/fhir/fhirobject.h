@@ -11,6 +11,7 @@ class FhirObject {
 public:
     constexpr FhirObject() {}
     virtual ~FhirObject() = default;
+    virtual void ToJsonInline(web::json::value &json) const;
     virtual web::json::value ToJson() const;
 };
 

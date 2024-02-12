@@ -19,7 +19,9 @@ FhirGenericExtension::FhirGenericExtension(const web::json::value &json) : FhirE
 }
 
 web::json::value FhirGenericExtension::ToJson() const {
-    return json;
+    web::json::value v = web::json::value::parse(json.serialize());
+    FhirExtension::ToJsonInline(v);
+    return v;
 }
 
 

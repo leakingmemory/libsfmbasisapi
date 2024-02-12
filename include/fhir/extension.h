@@ -15,6 +15,7 @@ public:
     explicit FhirExtension(const std::string &url) : url(url) {}
     explicit FhirExtension(std::string &&url) : url(std::move(url)) {}
     virtual ~FhirExtension() = default;
+    void ToJsonInline(web::json::value &json) const override;
     virtual web::json::value ToJson() const override;
     static std::shared_ptr<FhirExtension> Parse(const web::json::value &);
     [[nodiscard]] std::string GetUrl() const {

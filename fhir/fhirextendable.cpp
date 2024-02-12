@@ -14,15 +14,18 @@ bool FhirExtendable::ParseInline(const web::json::value &json) {
     return true;
 }
 
-web::json::value FhirExtendable::ToJson() const {
-    auto obj = FhirObject::ToJson();
+void FhirExtendable::ToJsonInline(web::json::value &json) const {
+    FhirObject::ToJsonInline(json);
     if (!extensions.empty()) {
         auto arr = web::json::value::array(extensions.size());
         typeof(extensions.size()) i = 0;
         for (const auto &ext : extensions) {
             arr[i++] = ext->ToJson();
         }
-        obj["extension"] = arr;
+        json["extension"] = arr;
     }
-    return obj;
+}
+
+web::json::value FhirExtendable::ToJson() const {
+    return FhirObject::ToJson();
 }
