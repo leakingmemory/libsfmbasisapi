@@ -60,7 +60,7 @@ private:
     web::json::value json;
 public:
     FhirGenericExtension() : json() {}
-    explicit FhirGenericExtension(const web::json::value &json);
+    FhirGenericExtension(const std::string &url, const web::json::value &json);
     web::json::value ToJson() const override;
 };
 

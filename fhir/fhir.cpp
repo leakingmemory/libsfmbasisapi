@@ -12,7 +12,7 @@ web::json::value FhirValueExtension::ToJson() const {
     return obj;
 }
 
-FhirGenericExtension::FhirGenericExtension(const web::json::value &json) : FhirExtension(), json(json) {
+FhirGenericExtension::FhirGenericExtension(const std::string &url, const web::json::value &json) : FhirExtension(url), json(json) {
     if (json.has_string_field("url")) {
         SetUrl(json.at("url").as_string());
     }

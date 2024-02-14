@@ -7,7 +7,9 @@
 
 void FhirExtension::ToJsonInline(web::json::value &json) const {
     FhirExtendable::ToJsonInline(json);
-    json["url"] = web::json::value::string(url);
+    if (!url.empty()) {
+        json["url"] = web::json::value::string(url);
+    }
 }
 
 web::json::value FhirExtension::ToJson() const {
@@ -41,7 +43,7 @@ std::shared_ptr<FhirExtension> FhirExtension::Parse(const web::json::value &obj)
     if (genericJson.has_field("extension")) {
         genericJson.erase("extension");
     }
-    auto ext = std::make_shared<FhirGenericExtension>(genericJson);
+    auto ext = std::make_shared<FhirGenericExtension>(url, genericJson);
     ext->ParseInline(obj);
     return ext;
 }
