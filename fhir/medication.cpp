@@ -26,7 +26,7 @@ web::json::value FhirIngredient::ToJson() const {
     if (itemReference.IsSet()) {
         val["itemReference"] = itemReference.ToJson();
     }
-    val["isActive"] = isActive;
+    val["isActive"] = web::json::value::boolean(isActive);
     if (strength.IsSet()) {
         val["strength"] = strength.ToJson();
     }
