@@ -11,6 +11,7 @@
 class FhirBasic : public Fhir {
 private:
     std::vector<FhirIdentifier> identifiers{};
+    FhirCodeableConcept code{};
     FhirReference subject{};
 public:
     FhirBasic() : Fhir("Basic") {}

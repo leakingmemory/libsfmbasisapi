@@ -95,14 +95,16 @@ web::json::value FhirCodeableConcept::ToJson() const {
 
 FhirCodeableConcept FhirCodeableConcept::Parse(const web::json::value &obj) {
     std::vector<FhirCoding> coding{};
-    if (obj.has_array_field("coding")) {
-        for (const auto &c : obj.at("coding").as_array()) {
-            coding.emplace_back(FhirCoding::Parse(c));
-        }
-    }
     std::string text{};
-    if (obj.has_string_field("text")) {
-        text = obj.at("text").as_string();
+    if (obj.is_object()) {
+        if (obj.has_array_field("coding")) {
+            for (const auto &c: obj.at("coding").as_array()) {
+                coding.emplace_back(FhirCoding::Parse(c));
+            }
+        }
+        if (obj.has_string_field("text")) {
+            text = obj.at("text").as_string();
+        }
     }
     return FhirCodeableConcept(std::move(coding), std::move(text));
 }

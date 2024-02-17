@@ -18,6 +18,9 @@ web::json::value FhirBasic::ToJson() const {
         }
         obj["identifier"] = arr;
     }
+    if (code.IsSet()) {
+        obj["code"] = code.ToJson();
+    }
     return obj;
 }
 
@@ -36,6 +39,9 @@ FhirBasic FhirBasic::Parse(const web::json::value &obj) {
         for (const auto &id : arr) {
             fhirBasic.identifiers.push_back(FhirIdentifier::Parse(id));
         }
+    }
+    if (obj.has_field("code")) {
+        fhirBasic.code = FhirCodeableConcept::Parse(obj.at("code"));
     }
 
     return fhirBasic;
