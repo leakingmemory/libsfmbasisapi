@@ -87,11 +87,12 @@ FhirComposition FhirComposition::Parse(const web::json::value &obj) {
     }
 
     if (obj.has_object_field("relatesTo")) {
-        if (obj.has_string_field("code")) {
-            comp.relatesToCode = obj.at("code").as_string();
+        auto rel = obj.at("relatesTo");
+        if (rel.has_string_field("code")) {
+            comp.relatesToCode = rel.at("code").as_string();
         }
-        if (obj.has_object_field("targetIdentifier")) {
-            comp.relatesTo = FhirIdentifier::Parse(obj.at("targetIdentifier"));
+        if (rel.has_object_field("targetIdentifier")) {
+            comp.relatesTo = FhirIdentifier::Parse(rel.at("targetIdentifier"));
         }
     }
 
