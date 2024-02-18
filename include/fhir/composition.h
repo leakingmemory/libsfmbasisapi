@@ -18,6 +18,8 @@ private:
     std::vector<FhirCompositionSection> sections{};
     std::string title{};
     std::string confidentiality{};
+    std::string relatesToCode{};
+    FhirIdentifier relatesTo{};
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirComposition() : Fhir("Composition") {}
     [[nodiscard]] FhirIdentifier GetIdentifier() const { return identifier; }
@@ -27,6 +29,8 @@ public:
     [[nodiscard]] std::vector<FhirCompositionSection> GetSections() const { return sections; }
     [[nodiscard]] std::string GetTitle() const { return title; }
     [[nodiscard]] std::string GetConfidentiality() const { return confidentiality; }
+    [[nodiscard]] std::string GetRelatesToCode() const { return relatesToCode; }
+    [[nodiscard]] FhirIdentifier GetRelatesTo() const { return relatesTo; }
 
     void SetIdentifier(const FhirIdentifier &identifier) { this->identifier = identifier; }
     void SetType(const FhirCodeableConcept &type) { this->type = type; }
@@ -37,6 +41,8 @@ public:
     void AddSection(const FhirCompositionSection &section) { this->sections.push_back(section); }
     void SetTitle(const std::string &title) { this->title = title; }
     void SetConfidentiality(const std::string &confidentiality) { this->confidentiality = confidentiality; }
+    void SetRelatesToCode(const std::string &code) { this->relatesToCode = code; }
+    void SetRelatesTo(const FhirIdentifier &relatesTo) { this->relatesTo = relatesTo; }
 
     [[nodiscard]] web::json::value ToJson() const;
     static FhirComposition Parse(const web::json::value &obj);

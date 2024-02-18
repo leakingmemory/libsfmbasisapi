@@ -37,6 +37,14 @@ web::json::value FhirComposition::ToJson() const {
         }
         obj["section"] = arr;
     }
+    if (relatesTo.IsSet()) {
+        auto rel = web::json::value::object();
+        if (!relatesToCode.empty()) {
+            rel["code"] = web::json::value::string(relatesToCode);
+        }
+        rel["targetIdentifier"] = relatesTo.ToJson();
+        obj["relatesTo"] = rel;
+    }
     return obj;
 }
 
@@ -75,6 +83,15 @@ FhirComposition FhirComposition::Parse(const web::json::value &obj) {
 
         for(int i=0; i<sections_arr.size(); i++) {
             comp.sections.push_back(FhirCompositionSection::Parse(sections_arr[i]));
+        }
+    }
+
+    if (obj.has_object_field("relatesTo")) {
+        if (obj.has_string_field("code")) {
+            comp.relatesToCode = obj.at("code").as_string();
+        }
+        if (obj.has_object_field("targetIdentifier")) {
+            comp.relatesTo = FhirIdentifier::Parse(obj.at("targetIdentifier"));
         }
     }
 
