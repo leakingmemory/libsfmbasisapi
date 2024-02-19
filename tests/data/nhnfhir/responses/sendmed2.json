@@ -1,0 +1,1 @@
+{"parameter":[{"name":"recallCount","valueInteger":0},{"name":"prescriptionCount","valueInteger":1},{"name":"prescriptionOperationResult","part":[{"name":"reseptID","valueString":"b733fb1b-d3f4-4802-8c2d-2981bf2fac2d"},{"name":"resultCode","valueCoding":{"code":"0","display":"OK","system":"http://ehelse.no/fhir/CodeSystem/sfm-kj-rf-error-code"}}]}],"resourceType":"Parameters"}

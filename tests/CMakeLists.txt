@@ -48,6 +48,7 @@ add_test(NAME ParseGetmedResp2 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/test
 add_test(NAME ParseGetmedResp3 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/getmedex2.json" response)
 add_test(NAME ParseSendmedReq COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/requests/sendmed.json" sendmedrequest)
 add_test(NAME ParseSendmedResp COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/sendmed.json" sendmedresponse)
+add_test(NAME ParseSendmedResp2 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/sendmed2.json" sendmedresponse2)
 
 add_executable(fhirResourceTypeTest assert.cpp fhirResourceType.cpp)
 add_dependencies(fhirResourceTypeTest "cpplevel.h")
