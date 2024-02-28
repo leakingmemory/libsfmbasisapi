@@ -557,6 +557,14 @@ std::string FhirDateValue::GetPropertyName() const {
     return PropertyName();
 }
 
+std::string FhirDateValue::GetRawValue() const {
+    return date;
+}
+
+void FhirDateValue::SetValue(const std::string &value) {
+    date = value;
+}
+
 web::json::value FhirDateValue::ToJson() const {
     return web::json::value::string(date);
 }

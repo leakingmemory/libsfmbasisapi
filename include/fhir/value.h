@@ -341,6 +341,9 @@ public:
     [[nodiscard]] std::string GetDateTime() const {
         return dateTime;
     }
+    void SetDateTime(const std::string &dateTime) {
+        this->dateTime = dateTime;
+    }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
     web::json::value ToJson() const;
@@ -356,6 +359,9 @@ public:
     bool IsTrue() const {
         return value;
     }
+    void SetValue(bool value) {
+        this->value = value;
+    }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
     web::json::value ToJson() const;
@@ -370,6 +376,9 @@ public:
     constexpr FhirIntegerValue(long value) : value(value) {}
     long GetValue() const {
         return value;
+    }
+    void SetValue(long value) {
+        this->value = value;
     }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
@@ -400,6 +409,8 @@ public:
     constexpr explicit FhirDateValue(const std::string &date) : date(date) {}
     static std::string PropertyName();
     std::string GetPropertyName() const override;
+    std::string GetRawValue() const;
+    void SetValue(const std::string &value);
     web::json::value ToJson() const;
     static std::shared_ptr<FhirDateValue> Parse(const web::json::value &obj);
 };
