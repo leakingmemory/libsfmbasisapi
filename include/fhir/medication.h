@@ -43,6 +43,7 @@ class FhirMedication : public Fhir {
     FhirCodeableConcept form{};
     FhirRatio amount{};
     std::vector<FhirIngredient> ingredients{};
+    std::string name{};
     bool hasIngredients{false};
 public:
     static FhirMedication Parse(const web::json::value &);
@@ -59,6 +60,9 @@ public:
     [[nodiscard]] std::vector<FhirIngredient> GetIngredients() const {
         return ingredients;
     }
+    [[nodiscard]] std::string GetName() const {
+        return name;
+    }
 
     void SetCode(const FhirCodeableConcept &code) {
         this->code = code;
@@ -74,7 +78,18 @@ public:
 
     void SetIngredients(const std::vector<FhirIngredient> &ingredients) {
         this->ingredients = ingredients;
+        this->hasIngredients = true;
     }
+    void UnsetIngredients() {
+        this->ingredients = {};
+        this->hasIngredients = false;
+    }
+
+    void SetName(const std::string &name) {
+        this->name = name;
+    }
+
+    [[nodiscard]] std::string GetDisplay() const override;
 };
 
 #endif //SFMBASISFAKER_MEDICATION_H

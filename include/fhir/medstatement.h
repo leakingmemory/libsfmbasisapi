@@ -35,6 +35,8 @@ public:
     void SetSubject(const FhirReference &reference) {
         subject = reference;
     }
+
+    [[nodiscard]] std::string GetDisplay() const override;
 };
 
 #endif //SFMBASISFAKER_MEDSTATEMENT_H

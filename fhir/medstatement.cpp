@@ -60,3 +60,11 @@ FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &o
 
     return medStatement;
 }
+
+std::string FhirMedicationStatement::GetDisplay() const {
+    auto display = medicationReference.GetDisplay();
+    if (!display.empty()) {
+        return display;
+    }
+    return Fhir::GetDisplay();
+}

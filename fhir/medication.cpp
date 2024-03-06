@@ -77,3 +77,10 @@ web::json::value FhirMedication::ToJson() const {
     }
     return val;
 }
+
+std::string FhirMedication::GetDisplay() const {
+    if (!name.empty()) {
+        return name;
+    }
+    return Fhir::GetDisplay();
+}
