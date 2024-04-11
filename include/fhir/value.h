@@ -139,7 +139,7 @@ public:
     static std::shared_ptr<FhirQuantityValue> Parse(const web::json::value &obj);
 };
 
-class FhirRatio : public FhirObject {
+class FhirRatio : public FhirExtendable {
 private:
     FhirQuantity numerator;
     FhirQuantity denominator;

@@ -167,13 +167,14 @@ std::shared_ptr<FhirQuantityValue> FhirQuantityValue::Parse(const web::json::val
 }
 
 web::json::value FhirRatio::ToJson() const {
-    auto obj = FhirObject::ToJson();
+    auto obj = FhirExtendable::ToJson();
     if (numerator.IsSet()) {
         obj["numerator"] = numerator.ToJson();
     }
     if (denominator.IsSet()) {
         obj["denominator"] = denominator.ToJson();
     }
+    FhirExtendable::ToJsonInline(obj);
     return obj;
 }
 
@@ -186,7 +187,9 @@ FhirRatio FhirRatio::Parse(const web::json::value &obj) {
     if (obj.has_object_field("denominator")) {
         denominator = FhirQuantity::Parse(obj.at("denominator"));
     }
-    return {std::move(numerator), std::move(denominator)};
+    FhirRatio ratio{std::move(numerator), std::move(denominator)};
+    ratio.ParseInline(obj);
+    return ratio;
 }
 
 std::string FhirReference::GetPropertyName() const {
