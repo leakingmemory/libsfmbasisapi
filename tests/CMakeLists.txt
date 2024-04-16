@@ -58,3 +58,12 @@ target_link_libraries(fhirResourceTypeTest PRIVATE libfhir)
 target_link_libraries(fhirResourceTypeTest PRIVATE cpprestsdk::cpprest -lcrypto)
 
 add_test(NAME FhirResourceTypeTest COMMAND fhirResourceTypeTest)
+
+add_executable(parseOperationOutcome assert.cpp parseOperationOutcome.cpp)
+add_dependencies(parseOperationOutcome "cpplevel.h")
+target_include_directories(parseOperationOutcome PRIVATE ../include)
+target_include_directories(parseOperationOutcome PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..")
+target_link_libraries(parseOperationOutcome PRIVATE libfhir)
+target_link_libraries(parseOperationOutcome PRIVATE cpprestsdk::cpprest -lcrypto)
+
+add_test(NAME OperationOutcomeTest COMMAND parseOperationOutcome "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/errors.json")

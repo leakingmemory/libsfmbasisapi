@@ -14,6 +14,7 @@
 #include <fhir/practitionerrole.h>
 #include <fhir/fhirbasic.h>
 #include <fhir/allergy.h>
+#include <fhir/operationoutcome.h>
 
 class FhirParseException : public std::exception {
 private:
@@ -68,11 +69,10 @@ std::shared_ptr<Fhir> Fhir::Parse(const web::json::value &obj) {
     if (resourceType == "AllergyIntolerance") {
         return std::make_shared<FhirAllergyIntolerance>(FhirAllergyIntolerance::Parse(obj));
     }
+    if (resourceType == "OperationOutcome") {
+        return std::make_shared<FhirOperationOutcome>(FhirOperationOutcome::Parse(obj));
+    }
     std::string error{"Unknown resourceType: "};
     error.append(resourceType);
     throw FhirParseException(error);
-}
-
-std::string Fhir::GetDisplay() const {
-    return !id.empty() ? id : "Display";
 }

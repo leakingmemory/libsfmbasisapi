@@ -119,3 +119,7 @@ web::json::value Fhir::ToJson() const {
     }
     return obj;
 }
+
+std::string Fhir::GetDisplay() const {
+    return !id.empty() ? id : "Display";
+}
