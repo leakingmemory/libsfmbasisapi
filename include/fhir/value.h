@@ -128,7 +128,7 @@ public:
     static FhirQuantity Parse(const web::json::value &obj);
 };
 
-class FhirQuantityValue : public FhirValue, FhirQuantity {
+class FhirQuantityValue : public FhirValue, public FhirQuantity {
 public:
     explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirQuantityValue(const FhirQuantity &q) : FhirQuantity(q) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING static std::string PropertyName() {
