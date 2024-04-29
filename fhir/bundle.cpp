@@ -21,6 +21,10 @@ void FhirBundle::AddEntry(FhirBundleEntry &&entry) {
     entries.emplace_back(std::move(entry));
 }
 
+void FhirBundle::SetEntries(const std::vector<FhirBundleEntry> &entries) {
+    this->entries = entries;
+}
+
 web::json::value FhirBundle::ToJson() const {
     auto obj = Fhir::ToJson();
     obj["resourceType"] = web::json::value::string("Bundle");

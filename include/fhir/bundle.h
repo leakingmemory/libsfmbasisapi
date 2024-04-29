@@ -23,6 +23,7 @@ public:
     void AddLink(std::string &&relation, std::string &&url);
     void AddEntry(const FhirBundleEntry &entry);
     void AddEntry(FhirBundleEntry &&entry);
+    void SetEntries(const std::vector<FhirBundleEntry> &entries);
     [[nodiscard]] std::vector<FhirLink> GetLink() const { return link; }
     [[nodiscard]] std::vector<FhirBundleEntry> GetEntries() const { return entries; }
     [[nodiscard]] std::string GetType() const {
