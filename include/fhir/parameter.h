@@ -19,8 +19,9 @@ private:
     std::string name;
 public:
     FhirParameter() : resource(), value(), part(), name() {}
-    FhirParameter(const std::string &name, const std::shared_ptr<Fhir> &resource) : resource(resource), value(), name(name) {}
-    FhirParameter(const std::string &name, const std::shared_ptr<FhirValue> &value) : resource(), value(value), name(name) {}
+    FhirParameter(const std::string &name, const std::shared_ptr<Fhir> &resource) : resource(resource), value(), part(), name(name) {}
+    FhirParameter(const std::string &name, const std::shared_ptr<FhirValue> &value) : resource(), value(value), part(), name(name) {}
+    FhirParameter(const std::string &name, const std::vector<std::shared_ptr<FhirParameter>> &part) : resource(), value(), part(part), name(name) {}
     [[nodiscard]] std::shared_ptr<Fhir> GetResource() const { return resource; }
     [[nodiscard]] std::shared_ptr<FhirValue> GetFhirValue() const { return value; }
     [[nodiscard]] std::vector<std::shared_ptr<FhirParameter>> GetPart() const { return part; }

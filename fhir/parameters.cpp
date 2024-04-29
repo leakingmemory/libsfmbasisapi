@@ -12,6 +12,10 @@ void FhirParameters::AddParameter(const std::string &name, const std::shared_ptr
     parameters.emplace_back(name, parameter);
 }
 
+void FhirParameters::AddParameter(const std::string &name, const std::vector<std::shared_ptr<FhirParameter>> &part) {
+    parameters.emplace_back(name, part);
+}
+
 web::json::value FhirParameters::ToJson() const {
     auto obj = Fhir::ToJson();
     auto arr = web::json::value::array(parameters.size());

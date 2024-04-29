@@ -17,6 +17,7 @@ public:
     }
     void AddParameter(const std::string &name, const std::shared_ptr<Fhir> &parameter);
     void AddParameter(const std::string &name, const std::shared_ptr<FhirValue> &parameter);
+    void AddParameter(const std::string &name, const std::vector<std::shared_ptr<FhirParameter>> &part);
     [[nodiscard]] web::json::value ToJson() const;
     static FhirParameters Parse(const web::json::value &obj);
 };
