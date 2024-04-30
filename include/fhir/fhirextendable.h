@@ -23,6 +23,12 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<FhirExtension>> GetExtensions() const {
         return extensions;
     }
+    void SetExtensions(const std::vector<std::shared_ptr<FhirExtension>> &exts) {
+        extensions = exts;
+    }
+    void SetExtensions(std::vector<std::shared_ptr<FhirExtension>> &&exts) {
+        extensions = std::move(exts);
+    }
     void AddExtension(const std::shared_ptr<FhirExtension> &extension) {
         extensions.emplace_back(extension);
     }
