@@ -6,6 +6,10 @@ set(CPPLEVEL 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_options(-fPIC)
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+    add_compile_options(-I/usr/local/include)
+endif()
+
 find_package(cpprestsdk REQUIRED)
 
 try_compile(CONSTEXPRSTRINGTEST "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/configtests/constexprstrtest.cpp")

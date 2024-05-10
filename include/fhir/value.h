@@ -405,8 +405,8 @@ class FhirDateValue : public FhirValue {
 private:
     std::string date;
 public:
-    constexpr FhirDateValue() : date() {}
-    constexpr explicit FhirDateValue(const std::string &date) : date(date) {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirDateValue() : date() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirDateValue(const std::string &date) : date(date) {}
     static std::string PropertyName();
     std::string GetPropertyName() const override;
     std::string GetRawValue() const;
