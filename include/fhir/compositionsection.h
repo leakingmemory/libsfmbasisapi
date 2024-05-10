@@ -16,7 +16,7 @@ private:
     std::string textStatus{};
     std::string textXhtml{};
 public:
-    constexpr FhirCompositionSection() {}
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCompositionSection() {}
 
     void SetCode(const FhirCodeableConcept &code) { this->code = code; }
     void SetEmptyReason(const FhirCodeableConcept &emptyReason) { this->emptyReason = emptyReason; }
