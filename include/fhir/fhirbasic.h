@@ -19,8 +19,18 @@ public:
     web::json::value ToJson() const;
     static FhirBasic Parse(const web::json::value &obj);
 
-    std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
-    FhirReference GetSubject() const { return subject; }
+    [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
+    [[nodiscard]] FhirCodeableConcept GetCode() const { return code; }
+    [[nodiscard]] FhirReference GetSubject() const { return subject; }
+    void SetIdentifiers(const std::vector<FhirIdentifier> &identifiers) {
+        this->identifiers = identifiers;
+    }
+    void SetCode(const FhirCodeableConcept &code) {
+        this->code = code;
+    }
+    void SetSubject(const FhirReference &subject) {
+        this->subject = subject;
+    }
 };
 
 #endif //LIBSFMBASISAPI_FHIRBASIC_H
