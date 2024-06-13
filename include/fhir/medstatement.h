@@ -23,6 +23,9 @@ public:
     FhirReference GetMedicationReference() const { return medicationReference; }
     FhirReference GetSubject() const { return subject; }
 
+    void SetIdentifiers(const std::vector<FhirIdentifier> &identifiers) {
+        this->identifiers = identifiers;
+    }
     void AddIdentifier(const FhirIdentifier &identifier) {
         identifiers.emplace_back(identifier);
     }
