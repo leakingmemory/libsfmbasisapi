@@ -52,7 +52,13 @@ public:
     [[nodiscard]] std::shared_ptr<FhirValue> GetValue() const {
         return value;
     }
-    web::json::value ToJson() const override;
+    void SetValue(const std::shared_ptr<FhirValue> &v) {
+        value = v;
+    }
+    void SetValue(std::shared_ptr<FhirValue> &&v) {
+        value = std::move(v);
+    }
+    [[nodiscard]] web::json::value ToJson() const override;
 };
 
 class FhirGenericExtension : public FhirExtension {
