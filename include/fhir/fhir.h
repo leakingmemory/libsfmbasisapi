@@ -32,7 +32,8 @@ enum class FhirStatus {
     NOT_SET,
     ACTIVE,
     FINAL,
-    COMPLETED
+    COMPLETED,
+    STOPPED
 };
 
 class FhirValue : public FhirObject {
