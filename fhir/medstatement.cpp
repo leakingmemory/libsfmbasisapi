@@ -29,15 +29,18 @@ web::json::value FhirMedicationStatement::ToJson() const {
         }
         obj["dosage"] = arr;
     }
+    FhirPartOfChain::ToJsonInline(obj);
     return obj;
 }
 
 FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &obj) {
     FhirMedicationStatement medStatement{};
 
-    if (!medStatement.ParseInline(obj)) {
+    if (!medStatement.Fhir::ParseInline(obj)) {
         throw std::exception();
     }
+
+    medStatement.FhirPartOfChain::ParseInline(obj);
 
     if (obj.has_object_field("medicationReference")) {
         medStatement.medicationReference = FhirReference::Parse(obj.at("medicationReference"));

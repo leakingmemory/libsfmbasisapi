@@ -7,8 +7,9 @@
 
 #include "value.h"
 #include "dosage.h"
+#include "fhirpartofchain.h"
 
-class FhirMedicationStatement : public Fhir {
+class FhirMedicationStatement : public Fhir, public FhirPartOfChain {
 private:
     std::vector<FhirIdentifier> identifiers{};
     std::vector<FhirDosage> dosage{};

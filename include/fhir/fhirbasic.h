@@ -7,8 +7,9 @@
 
 #include "value.h"
 #include "dosage.h"
+#include "fhirpartofchain.h"
 
-class FhirBasic : public Fhir {
+class FhirBasic : public Fhir, public FhirPartOfChain {
 private:
     std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
