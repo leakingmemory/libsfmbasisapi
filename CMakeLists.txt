@@ -29,7 +29,7 @@ add_subdirectory(fhir)
 add_subdirectory(nhnfhir)
 
 add_library(sfmbasisapi SHARED main.cpp)
-set_target_properties(sfmbasisapi PROPERTIES SOVERSION 1 VERSION 1.1.0)
+set_target_properties(sfmbasisapi PROPERTIES SOVERSION 2 VERSION 2.0.0)
 add_dependencies(sfmbasisapi "cpplevel.h")
 
 target_link_libraries(sfmbasisapi PRIVATE libfhir)
