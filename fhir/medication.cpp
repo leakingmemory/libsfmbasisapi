@@ -38,6 +38,12 @@ FhirMedication FhirMedication::Parse(const web::json::value &obj) {
     if (!medication.ParseInline(obj)) {
         throw std::exception();
     }
+    if (obj.has_field("identifier")) {
+        const auto arr = obj.at("identifier").as_array();
+        for (const auto &id : arr) {
+            medication.identifiers.push_back(FhirIdentifier::Parse(id));
+        }
+    }
     if (obj.has_object_field("code")) {
         medication.code = FhirCodeableConcept::Parse(obj.at("code"));
     }
@@ -59,6 +65,14 @@ FhirMedication FhirMedication::Parse(const web::json::value &obj) {
 web::json::value FhirMedication::ToJson() const {
     web::json::value val = Fhir::ToJson();
     val["resourceType"] = web::json::value::string("Medication");
+    if (!identifiers.empty()) {
+        auto arr = web::json::value::array(identifiers.size());
+        typeof(identifiers.size()) i = 0;
+        for (const auto &id : identifiers) {
+            arr[i++] = id.ToJson();
+        }
+        val["identifier"] = arr;
+    }
     if (code.IsSet()) {
         val["code"] = code.ToJson();
     }

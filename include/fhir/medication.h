@@ -39,6 +39,7 @@ public:
 };
 
 class FhirMedication : public Fhir {
+    std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
     FhirCodeableConcept form{};
     FhirRatio amount{};
@@ -48,6 +49,9 @@ class FhirMedication : public Fhir {
 public:
     static FhirMedication Parse(const web::json::value &);
     web::json::value ToJson() const;
+    [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const {
+        return identifiers;
+    }
     [[nodiscard]] FhirCodeableConcept GetCode() const {
         return code;
     }
@@ -62,6 +66,10 @@ public:
     }
     [[nodiscard]] std::string GetName() const {
         return name;
+    }
+
+    void SetIdentifiers(const std::vector<FhirIdentifier> &identifiers) {
+        this->identifiers = identifiers;
     }
 
     void SetCode(const FhirCodeableConcept &code) {
