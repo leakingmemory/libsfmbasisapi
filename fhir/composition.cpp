@@ -4,6 +4,58 @@
 
 #include <fhir/composition.h>
 
+std::string FhirAttester::GetMode() const {
+    return mode;
+}
+
+void FhirAttester::SetMode(const std::string &m) {
+    mode = m;
+}
+
+std::string FhirAttester::GetDateTime() const {
+    return dateTime;
+}
+
+void FhirAttester::SetDateTime(const std::string &d) {
+    dateTime = d;
+}
+
+FhirReference FhirAttester::GetParty() const {
+    return party;
+}
+
+void FhirAttester::SetParty(const FhirReference &p) {
+    party = p;
+}
+
+web::json::value FhirAttester::ToJson() const {
+    auto json = web::json::value::object();
+    if (!mode.empty()) {
+        json["mode"] = web::json::value::string(mode);
+    }
+    if (!dateTime.empty()) {
+        json["time"] = web::json::value::string(dateTime);
+    }
+    if (party.IsSet()) {
+        json["party"] = party.ToJson();
+    }
+    return json;
+}
+
+FhirAttester FhirAttester::Parse(const web::json::value &obj) {
+    FhirAttester attester{};
+    if (obj.has_string_field("mode")) {
+        attester.mode = obj.at("mode").as_string();
+    }
+    if (obj.has_string_field("time")) {
+        attester.dateTime = obj.at("time").as_string();
+    }
+    if (obj.has_object_field("party")) {
+        attester.party = FhirReference::Parse(obj.at("party"));
+    }
+    return attester;
+}
+
 web::json::value FhirComposition::ToJson() const {
     auto obj = Fhir::ToJson();
     if (identifier.IsSet()) {
@@ -44,6 +96,14 @@ web::json::value FhirComposition::ToJson() const {
         }
         rel["targetIdentifier"] = relatesTo.ToJson();
         obj["relatesTo"] = rel;
+    }
+    if (!attester.empty()) {
+        auto att = web::json::value::array(attester.size());
+        typeof(attester.size()) j = 0;
+        for (const auto &at: attester) {
+            att[j++] = at.ToJson();
+        }
+        obj["attester"] = att;
     }
     return obj;
 }
@@ -93,6 +153,14 @@ FhirComposition FhirComposition::Parse(const web::json::value &obj) {
         }
         if (rel.has_object_field("targetIdentifier")) {
             comp.relatesTo = FhirIdentifier::Parse(rel.at("targetIdentifier"));
+        }
+    }
+
+    if (obj.has_array_field("attester")) {
+        web::json::array attester_arr = obj.at("attester").as_array();
+
+        for (int i = 0; i < attester_arr.size(); i++) {
+            comp.attester.push_back(FhirAttester::Parse(attester_arr[i]));
         }
     }
 

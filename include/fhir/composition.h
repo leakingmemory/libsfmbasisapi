@@ -9,6 +9,22 @@
 #include "value.h"
 #include "compositionsection.h"
 
+class FhirAttester {
+private:
+    std::string mode{};
+    std::string dateTime{};
+    FhirReference party{};
+public:
+    [[nodiscard]] std::string GetMode() const;
+    void SetMode(const std::string &);
+    [[nodiscard]] std::string GetDateTime() const;
+    void SetDateTime(const std::string &dateTime);
+    [[nodiscard]] FhirReference GetParty() const;
+    void SetParty(const FhirReference &);
+    [[nodiscard]] web::json::value ToJson() const;
+    static FhirAttester Parse(const web::json::value &obj);
+};
+
 class FhirComposition : public Fhir {
 private:
     FhirIdentifier identifier{};
@@ -20,6 +36,7 @@ private:
     std::string confidentiality{};
     std::string relatesToCode{};
     FhirIdentifier relatesTo{};
+    std::vector<FhirAttester> attester{};
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirComposition() : Fhir("Composition") {}
     [[nodiscard]] FhirIdentifier GetIdentifier() const { return identifier; }
@@ -31,6 +48,7 @@ public:
     [[nodiscard]] std::string GetConfidentiality() const { return confidentiality; }
     [[nodiscard]] std::string GetRelatesToCode() const { return relatesToCode; }
     [[nodiscard]] FhirIdentifier GetRelatesTo() const { return relatesTo; }
+    [[nodiscard]] std::vector<FhirAttester> GetAttester() const { return attester; }
 
     void SetIdentifier(const FhirIdentifier &identifier) { this->identifier = identifier; }
     void SetType(const FhirCodeableConcept &type) { this->type = type; }
@@ -43,6 +61,7 @@ public:
     void SetConfidentiality(const std::string &confidentiality) { this->confidentiality = confidentiality; }
     void SetRelatesToCode(const std::string &code) { this->relatesToCode = code; }
     void SetRelatesTo(const FhirIdentifier &relatesTo) { this->relatesTo = relatesTo; }
+    void SetAttester(const std::vector<FhirAttester> &attester) { this->attester = attester; }
 
     [[nodiscard]] web::json::value ToJson() const;
     static FhirComposition Parse(const web::json::value &obj);
