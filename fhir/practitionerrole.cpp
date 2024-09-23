@@ -9,6 +9,9 @@ web::json::value FhirPractitionerRole::ToJson() const {
     if (practitioner.IsSet()) {
         json["practitioner"] = practitioner.ToJson();
     }
+    if (organization.IsSet()) {
+        json["organization"] = organization.ToJson();
+    }
     auto codeArray = web::json::value::array();
     auto i = 0;
     for (const auto &codeable : code) {
@@ -36,7 +39,14 @@ FhirPractitionerRole FhirPractitionerRole::Parse(const web::json::value &obj) {
             practitioner = reference;
         }
     }
-    FhirPractitionerRole practitionerRole{std::move(practitioner), std::move(codes)};
+    FhirReference organization{};
+    if (obj.has_object_field("organization")) {
+        auto reference = FhirReference::Parse(obj.at("organization"));
+        if (reference.IsSet()) {
+            organization = reference;
+        }
+    }
+    FhirPractitionerRole practitionerRole{std::move(practitioner), std::move(organization), std::move(codes)};
     if (!practitionerRole.ParseInline(obj)) {
         throw std::exception();
     }
