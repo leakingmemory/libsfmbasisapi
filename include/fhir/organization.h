@@ -11,12 +11,19 @@
 class FhirOrganization : public Fhir {
 private:
     std::vector<FhirIdentifier> identifiers{};
+    std::string name{};
 public:
-    [[nodiscard]] std::vector<FhirIdentifier> getIdentifiers() const {
+    [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const {
         return identifiers;
     }
     void SetIdentifiers(const std::vector<FhirIdentifier> &newIdentifiers) {
         identifiers = newIdentifiers;
+    }
+    [[nodiscard]] std::string GetName() const {
+        return name;
+    }
+    void SetName(const std::string &n) {
+        name = n;
     }
 
     [[nodiscard]] web::json::value ToJson() const;

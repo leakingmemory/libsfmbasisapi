@@ -14,6 +14,7 @@ private:
     std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
     FhirReference subject{};
+    FhirReference author{};
 public:
     FhirBasic() : Fhir("Basic") {}
 
@@ -23,6 +24,7 @@ public:
     [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
     [[nodiscard]] FhirCodeableConcept GetCode() const { return code; }
     [[nodiscard]] FhirReference GetSubject() const { return subject; }
+    [[nodiscard]] FhirReference GetAuthor() const { return author; }
     void SetIdentifiers(const std::vector<FhirIdentifier> &identifiers) {
         this->identifiers = identifiers;
     }
@@ -31,6 +33,9 @@ public:
     }
     void SetSubject(const FhirReference &subject) {
         this->subject = subject;
+    }
+    void SetAuthor(const FhirReference &author) {
+        this->author = author;
     }
 };
 

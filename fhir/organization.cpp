@@ -15,6 +15,9 @@ web::json::value FhirOrganization::ToJson() const {
         }
         obj["identifier"] = arr;
     }
+    if (!name.empty()) {
+        obj["name"] = web::json::value::string(name);
+    }
     return obj;
 }
 
@@ -24,6 +27,9 @@ FhirOrganization FhirOrganization::Parse(const web::json::value &obj) {
         throw std::exception();
     }
 
+    if (obj.has_string_field("name")) {
+        org.name = obj.at("name").as_string();
+    }
     if (obj.has_array_field("identifier")){
         auto arr = obj.at("identifier").as_array();
         for (const auto &identifier : arr) {

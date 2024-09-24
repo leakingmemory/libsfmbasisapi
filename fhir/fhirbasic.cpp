@@ -10,6 +10,9 @@ web::json::value FhirBasic::ToJson() const {
     if (subject.IsSet()) {
         obj["subject"] = subject.ToJson();
     }
+    if (author.IsSet()) {
+        obj["author"] = author.ToJson();
+    }
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
         typeof(identifiers.size()) i = 0;
@@ -36,6 +39,9 @@ FhirBasic FhirBasic::Parse(const web::json::value &obj) {
 
     if (obj.has_field("subject")) {
         fhirBasic.subject = FhirReference::Parse(obj.at("subject"));
+    }
+    if (obj.has_field("author")) {
+        fhirBasic.author = FhirReference::Parse(obj.at("author"));
     }
     if (obj.has_field("identifier")) {
         const auto arr = obj.at("identifier").as_array();
