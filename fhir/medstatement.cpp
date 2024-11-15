@@ -29,6 +29,9 @@ web::json::value FhirMedicationStatement::ToJson() const {
         }
         obj["dosage"] = arr;
     }
+    if (!effectiveDateTime.empty()) {
+        obj["effectiveDateTime"] = web::json::value::string(effectiveDateTime);
+    }
     FhirPartOfChain::ToJsonInline(obj);
     return obj;
 }
@@ -59,6 +62,9 @@ FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &o
         for (const auto &d : arr) {
             medStatement.dosage.push_back(FhirDosage::Parse(d));
         }
+    }
+    if (obj.has_string_field("effectiveDateTime")) {
+        medStatement.effectiveDateTime = obj.at("effectiveDateTime").as_string();
     }
 
     return medStatement;

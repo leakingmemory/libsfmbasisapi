@@ -15,14 +15,16 @@ private:
     std::vector<FhirDosage> dosage{};
     FhirReference medicationReference{};
     FhirReference subject{};
+    std::string effectiveDateTime{};
 public:
-    web::json::value ToJson() const;
+    [[nodiscard]] web::json::value ToJson() const;
     static FhirMedicationStatement Parse(const web::json::value &obj);
 
-    std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
-    std::vector<FhirDosage> GetDosage() const { return dosage; }
-    FhirReference GetMedicationReference() const { return medicationReference; }
-    FhirReference GetSubject() const { return subject; }
+    [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
+    [[nodiscard]] std::vector<FhirDosage> GetDosage() const { return dosage; }
+    [[nodiscard]] FhirReference GetMedicationReference() const { return medicationReference; }
+    [[nodiscard]] FhirReference GetSubject() const { return subject; }
+    [[nodiscard]] std::string GetEffectiveDateTime() const { return effectiveDateTime; }
 
     void SetIdentifiers(const std::vector<FhirIdentifier> &identifiers) {
         this->identifiers = identifiers;
@@ -38,6 +40,9 @@ public:
     }
     void SetSubject(const FhirReference &reference) {
         subject = reference;
+    }
+    void SetEffectiveDateTime(const std::string &dateTime) {
+        effectiveDateTime = dateTime;
     }
 
     [[nodiscard]] std::string GetDisplay() const override;
