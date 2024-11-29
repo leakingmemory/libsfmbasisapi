@@ -49,7 +49,7 @@ public:
     }
 };
 
-class FhirCodeableConcept : public FhirObject {
+class FhirCodeableConcept : public FhirExtendable {
 private:
     std::vector<FhirCoding> coding;
     std::string text;

@@ -78,7 +78,8 @@ FhirCoding FhirCoding::Parse(const web::json::value &obj) {
 }
 
 web::json::value FhirCodeableConcept::ToJson() const {
-    auto obj = FhirObject::ToJson();
+    auto obj = FhirExtendable::ToJson();
+    FhirExtendable::ToJsonInline(obj);
     auto jsonCoding = web::json::value::array();
     typeof(coding.size()) i = 0;
     for (const auto &c : coding) {
@@ -106,7 +107,9 @@ FhirCodeableConcept FhirCodeableConcept::Parse(const web::json::value &obj) {
             text = obj.at("text").as_string();
         }
     }
-    return FhirCodeableConcept(std::move(coding), std::move(text));
+    FhirCodeableConcept codeableConcept{std::move(coding), std::move(text)};
+    codeableConcept.ParseInline(obj);
+    return codeableConcept;
 }
 
 std::string FhirCodingValue::GetPropertyName() const {
