@@ -4,25 +4,31 @@
 
 #include <fhir/fhirbasic.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirBasic::ToJson() const {
     auto obj = Fhir::ToJson();
-    obj["resourceType"] = web::json::value::string("Basic");
+    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Basic"));
     if (subject.IsSet()) {
-        obj["subject"] = subject.ToJson();
+        obj[as_wstring_on_win32("subject")] = subject.ToJson();
     }
     if (author.IsSet()) {
-        obj["author"] = author.ToJson();
+        obj[as_wstring_on_win32("author")] = author.ToJson();
     }
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
+#ifdef WIN32
+        decltype(identifiers.size()) i = 0;
+#else
         typeof(identifiers.size()) i = 0;
+#endif
         for (const auto &id : identifiers) {
             arr[i++] = id.ToJson();
         }
-        obj["identifier"] = arr;
+        obj[as_wstring_on_win32("identifier")] = arr;
     }
     if (code.IsSet()) {
-        obj["code"] = code.ToJson();
+        obj[as_wstring_on_win32("code")] = code.ToJson();
     }
     FhirPartOfChain::ToJsonInline(obj);
     return obj;
@@ -37,20 +43,20 @@ FhirBasic FhirBasic::Parse(const web::json::value &obj) {
 
     fhirBasic.FhirPartOfChain::ParseInline(obj);
 
-    if (obj.has_field("subject")) {
-        fhirBasic.subject = FhirReference::Parse(obj.at("subject"));
+    if (obj.has_field(as_wstring_on_win32("subject"))) {
+        fhirBasic.subject = FhirReference::Parse(obj.at(as_wstring_on_win32("subject")));
     }
-    if (obj.has_field("author")) {
-        fhirBasic.author = FhirReference::Parse(obj.at("author"));
+    if (obj.has_field(as_wstring_on_win32("author"))) {
+        fhirBasic.author = FhirReference::Parse(obj.at(as_wstring_on_win32("author")));
     }
-    if (obj.has_field("identifier")) {
-        const auto arr = obj.at("identifier").as_array();
+    if (obj.has_field(as_wstring_on_win32("identifier"))) {
+        const auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
         for (const auto &id : arr) {
             fhirBasic.identifiers.push_back(FhirIdentifier::Parse(id));
         }
     }
-    if (obj.has_field("code")) {
-        fhirBasic.code = FhirCodeableConcept::Parse(obj.at("code"));
+    if (obj.has_field(as_wstring_on_win32("code"))) {
+        fhirBasic.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
     }
 
     return fhirBasic;

@@ -5,14 +5,16 @@
 #include <fhir/parameter.h>
 #include <fhir/fhir.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirParameter::ToJson() const {
     auto obj = FhirObject::ToJson();
-    obj["name"] = web::json::value::string(name);
+    obj[as_wstring_on_win32("name")] = web::json::value::string(as_wstring_on_win32(name));
     if (resource) {
-        obj["resource"] = resource->ToJson();
+        obj[as_wstring_on_win32("resource")] = resource->ToJson();
     }
     if (value) {
-        obj[value->GetPropertyName()] = value->ToJson();
+        obj[as_wstring_on_win32(value->GetPropertyName())] = value->ToJson();
     }
     if (!part.empty()) {
         auto arr = web::json::value::array();
@@ -20,7 +22,7 @@ web::json::value FhirParameter::ToJson() const {
         for (const auto &p : part) {
             arr[i++] = p->ToJson();
         }
-        obj["part"] = arr;
+        obj[as_wstring_on_win32("part")] = arr;
     }
     return obj;
 }
@@ -28,9 +30,9 @@ web::json::value FhirParameter::ToJson() const {
 FhirParameter FhirParameter::Parse(const web::json::value &obj) {
     FhirParameter parameter{};
     for (const auto &prop : obj.as_object()) {
-        const auto &key = prop.first;
+        auto key = from_wstring_on_win32(prop.first);
         if (key == "name") {
-            parameter.name = prop.second.as_string();
+            parameter.name = from_wstring_on_win32(prop.second.as_string());
         } else if (key == "resource") {
             parameter.resource = Fhir::Parse(prop.second);
         } else if (key.starts_with("value")) {

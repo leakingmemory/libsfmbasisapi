@@ -16,6 +16,8 @@
 #include <fhir/allergy.h>
 #include <fhir/operationoutcome.h>
 
+#include "../win32/w32strings.h"
+
 class FhirParseException : public std::exception {
 private:
     std::string error{};
@@ -29,10 +31,10 @@ const char *FhirParseException::what() const noexcept {
 }
 
 std::shared_ptr<Fhir> Fhir::Parse(const web::json::value &obj) {
-    if (!obj.has_string_field("resourceType")) {
+    if (!obj.has_string_field(as_wstring_on_win32("resourceType"))) {
         throw FhirParseException("No resourceType");
     }
-    auto resourceType = obj.at("resourceType").as_string();
+    auto resourceType = from_wstring_on_win32(obj.at(as_wstring_on_win32("resourceType")).as_string());
     if (resourceType == "Medication") {
         return std::make_shared<FhirMedication>(FhirMedication::Parse(obj));
     }

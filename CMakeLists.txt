@@ -4,13 +4,25 @@ project(libsfmbasisapi)
 set(CMAKE_CXX_STANDARD 23)
 set(CPPLEVEL 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_compile_options(-fPIC)
+
+if (WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    add_compile_options(-fPIC)
+endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
     add_compile_options(-I/usr/local/include)
 endif()
 
 find_package(cpprestsdk REQUIRED)
+
+if (WIN32)
+    message("cpprest include ${cpprestsdk_DIR}/../../../include")
+    add_compile_options("/I${cpprestsdk_DIR}/../../../include")
+
+    add_subdirectory(win32)
+endif()
 
 try_compile(CONSTEXPRSTRINGTEST "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/configtests/constexprstrtest.cpp")
 
@@ -20,10 +32,17 @@ else()
     set(CONSTEXPRSTRING "false")
 endif()
 
-add_custom_target("cpplevel.h"
-        ALL "cat" "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.in" | sed -e "s/xCPPLEVELx/${CPPLEVEL}/" | sed -e "s/xCONSTEXPRSTRINGx/${CONSTEXPRSTRING}/" > "${CMAKE_CURRENT_BINARY_DIR}/cpplevel.h"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.in"
-)
+if (WIN32)
+    add_custom_target("cpplevel.h"
+            ALL ${CMAKE_COMMAND} -E "copy" "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.fallback" "${CMAKE_CURRENT_BINARY_DIR}/cpplevel.h"
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.fallback"
+    )
+else()
+    add_custom_target("cpplevel.h"
+            ALL "cat" "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.in" | sed -e "s/xCPPLEVELx/${CPPLEVEL}/" | sed -e "s/xCONSTEXPRSTRINGx/${CONSTEXPRSTRING}/" > "${CMAKE_CURRENT_BINARY_DIR}/cpplevel.h"
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cpplevel.h.in"
+    )
+endif()
 
 add_subdirectory(fhir)
 add_subdirectory(nhnfhir)
@@ -37,7 +56,12 @@ target_include_directories(sfmbasisapi PRIVATE include)
 target_include_directories(sfmbasisapi PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(sfmbasisapi PRIVATE nhnfhir)
-target_link_libraries(sfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
+if (WIN32)
+    target_link_libraries(sfmbasisapi PRIVATE win32)
+    target_link_libraries(sfmbasisapi PRIVATE c:/libs/cpprest_2_10d.lib c:/libs/zlib.lib c:/libs/libssl.lib c:/libs/libcrypto.lib)
+else()
+    target_link_libraries(sfmbasisapi PRIVATE cpprestsdk::cpprest -lcrypto)
+endif()
 
 install(TARGETS sfmbasisapi
         LIBRARY DESTINATION lib

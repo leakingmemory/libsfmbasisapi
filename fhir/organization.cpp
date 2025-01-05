@@ -4,19 +4,25 @@
 
 #include <fhir/organization.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirOrganization::ToJson() const {
     auto obj = Fhir::ToJson();
-    obj["resourceType"] = web::json::value::string("Organization");
+    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Organization"));
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
+#ifdef WIN32
+        decltype(identifiers.size()) i = 0;
+#else
         typeof(identifiers.size()) i = 0;
+#endif
         for (const auto &identifier : identifiers) {
             arr[i++] = identifier.ToJson();
         }
-        obj["identifier"] = arr;
+        obj[as_wstring_on_win32("identifier")] = arr;
     }
     if (!name.empty()) {
-        obj["name"] = web::json::value::string(name);
+        obj[as_wstring_on_win32("name")] = web::json::value::string(as_wstring_on_win32(name));
     }
     return obj;
 }
@@ -27,11 +33,11 @@ FhirOrganization FhirOrganization::Parse(const web::json::value &obj) {
         throw std::exception();
     }
 
-    if (obj.has_string_field("name")) {
-        org.name = obj.at("name").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("name"))) {
+        org.name = from_wstring_on_win32(obj.at(as_wstring_on_win32("name")).as_string());
     }
-    if (obj.has_array_field("identifier")){
-        auto arr = obj.at("identifier").as_array();
+    if (obj.has_array_field(as_wstring_on_win32("identifier"))){
+        auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
         for (const auto &identifier : arr) {
             org.identifiers.push_back(FhirIdentifier::Parse(identifier));
         }

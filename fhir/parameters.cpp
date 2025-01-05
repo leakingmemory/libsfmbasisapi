@@ -4,6 +4,8 @@
 
 #include <fhir/parameters.h>
 
+#include "../win32/w32strings.h"
+
 void FhirParameters::AddParameter(const std::string &name, const std::shared_ptr<Fhir> &parameter) {
     parameters.emplace_back(name, parameter);
 }
@@ -19,12 +21,16 @@ void FhirParameters::AddParameter(const std::string &name, const std::vector<std
 web::json::value FhirParameters::ToJson() const {
     auto obj = Fhir::ToJson();
     auto arr = web::json::value::array(parameters.size());
+#ifdef WIN32
+    decltype(parameters.size()) i = 0;
+#else
     typeof(parameters.size()) i = 0;
+#endif
     for (const auto &parameter : parameters) {
         arr[i++] = parameter.ToJson();
     }
-    obj["resourceType"] = web::json::value::string("Parameters");
-    obj["parameter"] = arr;
+    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Parameters"));
+    obj[as_wstring_on_win32("parameter")] = arr;
     return obj;
 }
 
@@ -33,8 +39,8 @@ FhirParameters FhirParameters::Parse(const web::json::value &obj) {
     if (!parameters.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_array_field("parameter")) {
-        for (const auto &parameter : obj.at("parameter").as_array()) {
+    if (obj.has_array_field(as_wstring_on_win32("parameter"))) {
+        for (const auto &parameter : obj.at(as_wstring_on_win32("parameter")).as_array()) {
             parameters.parameters.emplace_back(FhirParameter::Parse(parameter));
         }
     }

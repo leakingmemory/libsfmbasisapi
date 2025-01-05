@@ -19,7 +19,7 @@ public:
     }
     std::string GetPropertyName() const override;
     web::json::value ToJson() const override;
-    static std::shared_ptr<FhirString> Parse(web::json::value value);
+    static std::shared_ptr<FhirString> Parse(const web::json::value &value);
     std::string GetValue() const {
         return value;
     }

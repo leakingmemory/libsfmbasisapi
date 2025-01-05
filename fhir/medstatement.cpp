@@ -4,33 +4,43 @@
 
 #include <fhir/medstatement.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirMedicationStatement::ToJson() const {
     auto obj = Fhir::ToJson();
-    obj["resourceType"] = web::json::value::string("MedicationStatement");
+    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("MedicationStatement"));
     if (medicationReference.IsSet()) {
-        obj["medicationReference"] = medicationReference.ToJson();
+        obj[as_wstring_on_win32("medicationReference")] = medicationReference.ToJson();
     }
     if (subject.IsSet()) {
-        obj["subject"] = subject.ToJson();
+        obj[as_wstring_on_win32("subject")] = subject.ToJson();
     }
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
+#ifdef WIN32
+        decltype(identifiers.size()) i = 0;
+#else
         typeof(identifiers.size()) i = 0;
+#endif
         for (const auto &id : identifiers) {
             arr[i++] = id.ToJson();
         }
-        obj["identifier"] = arr;
+        obj[as_wstring_on_win32("identifier")] = arr;
     }
     if (!dosage.empty()) {
         auto arr = web::json::value::array(dosage.size());
+#ifdef WIN32
+        decltype(dosage.size()) i = 0;
+#else
         typeof(dosage.size()) i = 0;
+#endif
         for (const auto &d : dosage) {
             arr[i++] = d.ToJson();
         }
-        obj["dosage"] = arr;
+        obj[as_wstring_on_win32("dosage")] = arr;
     }
     if (!effectiveDateTime.empty()) {
-        obj["effectiveDateTime"] = web::json::value::string(effectiveDateTime);
+        obj[as_wstring_on_win32("effectiveDateTime")] = web::json::value::string(as_wstring_on_win32(effectiveDateTime));
     }
     FhirPartOfChain::ToJsonInline(obj);
     return obj;
@@ -45,26 +55,26 @@ FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &o
 
     medStatement.FhirPartOfChain::ParseInline(obj);
 
-    if (obj.has_object_field("medicationReference")) {
-        medStatement.medicationReference = FhirReference::Parse(obj.at("medicationReference"));
+    if (obj.has_object_field(as_wstring_on_win32("medicationReference"))) {
+        medStatement.medicationReference = FhirReference::Parse(obj.at(as_wstring_on_win32("medicationReference")));
     }
-    if (obj.has_field("subject")) {
-        medStatement.subject = FhirReference::Parse(obj.at("subject"));
+    if (obj.has_field(as_wstring_on_win32("subject"))) {
+        medStatement.subject = FhirReference::Parse(obj.at(as_wstring_on_win32("subject")));
     }
-    if (obj.has_field("identifier")) {
-        const auto arr = obj.at("identifier").as_array();
+    if (obj.has_field(as_wstring_on_win32("identifier"))) {
+        const auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
         for (const auto &id : arr) {
             medStatement.identifiers.push_back(FhirIdentifier::Parse(id));
         }
     }
-    if (obj.has_field("dosage")) {
-        auto arr = obj.at("dosage").as_array();
+    if (obj.has_field(as_wstring_on_win32("dosage"))) {
+        auto arr = obj.at(as_wstring_on_win32("dosage")).as_array();
         for (const auto &d : arr) {
             medStatement.dosage.push_back(FhirDosage::Parse(d));
         }
     }
-    if (obj.has_string_field("effectiveDateTime")) {
-        medStatement.effectiveDateTime = obj.at("effectiveDateTime").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("effectiveDateTime"))) {
+        medStatement.effectiveDateTime = from_wstring_on_win32(obj.at(as_wstring_on_win32("effectiveDateTime")).as_string());
     }
 
     return medStatement;

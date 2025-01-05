@@ -6,24 +6,26 @@
 #include <fhir/fhir.h>
 #include <fhir/value.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirBundleEntry::ToJson() const {
     auto obj = FhirObject::ToJson();
     if (!fullUrl.empty()) {
-        obj["fullUrl"] = web::json::value::string(fullUrl);
+        obj[as_wstring_on_win32("fullUrl")] = web::json::value::string(as_wstring_on_win32(fullUrl));
     }
     if (resource) {
-        obj["resource"] = resource->ToJson();
+        obj[as_wstring_on_win32("resource")] = resource->ToJson();
     }
     return obj;
 }
 
 FhirBundleEntry FhirBundleEntry::Parse(const web::json::value &obj) {
     FhirBundleEntry entry{};
-    if (obj.has_string_field("fullUrl")) {
-        entry.fullUrl = obj.at("fullUrl").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("fullUrl"))) {
+        entry.fullUrl = from_wstring_on_win32(obj.at(as_wstring_on_win32("fullUrl")).as_string());
     }
-    if (obj.has_object_field("resource")) {
-        entry.resource = Fhir::Parse(obj.at("resource"));
+    if (obj.has_object_field(as_wstring_on_win32("resource"))) {
+        entry.resource = Fhir::Parse(obj.at(as_wstring_on_win32("resource")));
     }
     return entry;
 }

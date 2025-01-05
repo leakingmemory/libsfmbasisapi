@@ -4,27 +4,29 @@
 
 #include <fhir/practitionerrole.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirPractitionerRole::ToJson() const {
     auto json = Fhir::ToJson();
     if (practitioner.IsSet()) {
-        json["practitioner"] = practitioner.ToJson();
+        json[as_wstring_on_win32("practitioner")] = practitioner.ToJson();
     }
     if (organization.IsSet()) {
-        json["organization"] = organization.ToJson();
+        json[as_wstring_on_win32("organization")] = organization.ToJson();
     }
     auto codeArray = web::json::value::array();
     auto i = 0;
     for (const auto &codeable : code) {
         codeArray[i++] = codeable.ToJson();
     }
-    json["code"] = codeArray;
+    json[as_wstring_on_win32("code")] = codeArray;
     return json;
 }
 
 FhirPractitionerRole FhirPractitionerRole::Parse(const web::json::value &obj) {
     std::vector<FhirCodeableConcept> codes{};
-    if (obj.has_array_field("code")) {
-        auto code = obj.at("code").as_array();
+    if (obj.has_array_field(as_wstring_on_win32("code"))) {
+        auto code = obj.at(as_wstring_on_win32("code")).as_array();
         for (const auto &item : code) {
             auto codeable = FhirCodeableConcept::Parse(item);
             if (codeable.IsSet()) {
@@ -33,15 +35,15 @@ FhirPractitionerRole FhirPractitionerRole::Parse(const web::json::value &obj) {
         }
     }
     FhirReference practitioner{};
-    if (obj.has_object_field("practitioner")) {
-        auto reference = FhirReference::Parse(obj.at("practitioner"));
+    if (obj.has_object_field(as_wstring_on_win32("practitioner"))) {
+        auto reference = FhirReference::Parse(obj.at(as_wstring_on_win32("practitioner")));
         if (reference.IsSet()) {
             practitioner = reference;
         }
     }
     FhirReference organization{};
-    if (obj.has_object_field("organization")) {
-        auto reference = FhirReference::Parse(obj.at("organization"));
+    if (obj.has_object_field(as_wstring_on_win32("organization"))) {
+        auto reference = FhirReference::Parse(obj.at(as_wstring_on_win32("organization")));
         if (reference.IsSet()) {
             organization = reference;
         }

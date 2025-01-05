@@ -4,33 +4,39 @@
 
 #include <fhir/compositionsection.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirCompositionSection::ToJson() const {
     auto obj = FhirObject::ToJson();
     if (!title.empty()) {
-        obj["title"] = web::json::value::string(title);
+        obj[as_wstring_on_win32("title")] = web::json::value::string(as_wstring_on_win32(title));
     }
     if (code.IsSet()) {
-        obj["code"] = code.ToJson();
+        obj[as_wstring_on_win32("code")] = code.ToJson();
     }
     if (!textStatus.empty() || !textXhtml.empty()) {
         auto text = web::json::value::object();
         if (!textStatus.empty()) {
-            text["status"] = web::json::value::string(textStatus);
+            text[as_wstring_on_win32("status")] = web::json::value::string(as_wstring_on_win32(textStatus));
         }
         if (!textXhtml.empty()) {
-            text["div"] = web::json::value::string(textXhtml);
+            text[as_wstring_on_win32("div")] = web::json::value::string(as_wstring_on_win32(textXhtml));
         }
-        obj["text"] = text;
+        obj[as_wstring_on_win32("text")] = text;
     }
     if (!entries.empty()) {
         auto arr = web::json::value::array(entries.size());
+#ifdef WIN32
+        decltype(entries.size()) i = 0;
+#else
         typeof(entries.size()) i = 0;
+#endif
         for (const auto &e : entries) {
             arr[i++] = e.ToJson();
         }
-        obj["entry"] = arr;
+        obj[as_wstring_on_win32("entry")] = arr;
     } else if (emptyReason.IsSet()) {
-        obj["emptyReason"] = emptyReason.ToJson();
+        obj[as_wstring_on_win32("emptyReason")] = emptyReason.ToJson();
     }
     return obj;
 }
@@ -38,31 +44,31 @@ web::json::value FhirCompositionSection::ToJson() const {
 FhirCompositionSection FhirCompositionSection::Parse(const web::json::value &obj) {
     auto section = FhirCompositionSection();
 
-    if (obj.has_string_field("title")) {
-        section.title = obj.at("title").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("title"))) {
+        section.title = from_wstring_on_win32(obj.at(as_wstring_on_win32("title")).as_string());
     }
 
-    if (obj.has_object_field("code")) {
-        section.code = FhirCodeableConcept::Parse(obj.at("code"));
+    if (obj.has_object_field(as_wstring_on_win32("code"))) {
+        section.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
     }
 
-    if (obj.has_object_field("text")) {
-        auto text = obj.at("text");
-        if (text.has_string_field("status")) {
-            section.textStatus = text.at("status").as_string();
+    if (obj.has_object_field(as_wstring_on_win32("text"))) {
+        auto text = obj.at(as_wstring_on_win32("text"));
+        if (text.has_string_field(as_wstring_on_win32("status"))) {
+            section.textStatus = from_wstring_on_win32(text.at(as_wstring_on_win32("status")).as_string());
         }
-        if (text.has_string_field("div")) {
-            section.textXhtml = text.at("div").as_string();
+        if (text.has_string_field(as_wstring_on_win32("div"))) {
+            section.textXhtml = from_wstring_on_win32(text.at(as_wstring_on_win32("div")).as_string());
         }
     }
 
-    if (obj.has_array_field("entry")) {
-        auto arr = obj.at("entry").as_array();
+    if (obj.has_array_field(as_wstring_on_win32("entry"))) {
+        auto arr = obj.at(as_wstring_on_win32("entry")).as_array();
         for (const auto &e : arr) {
             section.entries.push_back(FhirReference::Parse(e));
         }
-    } else if (obj.has_object_field("emptyReason")) {
-        section.emptyReason = FhirCodeableConcept::Parse(obj.at("emptyReason"));
+    } else if (obj.has_object_field(as_wstring_on_win32("emptyReason"))) {
+        section.emptyReason = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("emptyReason")));
     }
 
     return section;

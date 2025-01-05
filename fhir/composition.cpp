@@ -4,6 +4,8 @@
 
 #include <fhir/composition.h>
 
+#include "../win32/w32strings.h"
+
 std::string FhirAttester::GetMode() const {
     return mode;
 }
@@ -31,27 +33,27 @@ void FhirAttester::SetParty(const FhirReference &p) {
 web::json::value FhirAttester::ToJson() const {
     auto json = web::json::value::object();
     if (!mode.empty()) {
-        json["mode"] = web::json::value::string(mode);
+        json[as_wstring_on_win32("mode")] = web::json::value::string(as_wstring_on_win32(mode));
     }
     if (!dateTime.empty()) {
-        json["time"] = web::json::value::string(dateTime);
+        json[as_wstring_on_win32("time")] = web::json::value::string(as_wstring_on_win32(dateTime));
     }
     if (party.IsSet()) {
-        json["party"] = party.ToJson();
+        json[as_wstring_on_win32("party")] = party.ToJson();
     }
     return json;
 }
 
 FhirAttester FhirAttester::Parse(const web::json::value &obj) {
     FhirAttester attester{};
-    if (obj.has_string_field("mode")) {
-        attester.mode = obj.at("mode").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("mode"))) {
+        attester.mode = from_wstring_on_win32(obj.at(as_wstring_on_win32("mode")).as_string());
     }
-    if (obj.has_string_field("time")) {
-        attester.dateTime = obj.at("time").as_string();
+    if (obj.has_string_field(as_wstring_on_win32("time"))) {
+        attester.dateTime = from_wstring_on_win32(obj.at(as_wstring_on_win32("time")).as_string());
     }
-    if (obj.has_object_field("party")) {
-        attester.party = FhirReference::Parse(obj.at("party"));
+    if (obj.has_object_field(as_wstring_on_win32("party"))) {
+        attester.party = FhirReference::Parse(obj.at(as_wstring_on_win32("party")));
     }
     return attester;
 }
@@ -59,51 +61,63 @@ FhirAttester FhirAttester::Parse(const web::json::value &obj) {
 web::json::value FhirComposition::ToJson() const {
     auto obj = Fhir::ToJson();
     if (identifier.IsSet()) {
-        obj["identifier"] = identifier.ToJson();
+        obj[as_wstring_on_win32("identifier")] = identifier.ToJson();
     }
     if (type.IsSet()) {
-        obj["type"] = type.ToJson();
+        obj[as_wstring_on_win32("type")] = type.ToJson();
     }
     if (subject.IsSet()) {
-        obj["subject"] = subject.ToJson();
+        obj[as_wstring_on_win32("subject")] = subject.ToJson();
     }
     if (!authors.empty()) {
         auto arr = web::json::value::array(authors.size());
+#ifdef WIN32
+        decltype(authors.size()) i = 0;
+#else
         typeof(authors.size()) i = 0;
+#endif
         for (const auto &a : authors) {
             arr[i++] = a.ToJson();
         }
-        obj["author"] = arr;
+        obj[as_wstring_on_win32("author")] = arr;
     }
     if (!title.empty()) {
-        obj["title"] = web::json::value::string(title);
+        obj[as_wstring_on_win32("title")] = web::json::value::string(as_wstring_on_win32(title));
     }
     if (!confidentiality.empty()) {
-        obj["confidentiality"] = web::json::value::string(confidentiality);
+        obj[as_wstring_on_win32("confidentiality")] = web::json::value::string(as_wstring_on_win32(confidentiality));
     }
     if (!sections.empty()) {
         auto arr = web::json::value::array(sections.size());
+#ifdef WIN32
+        decltype(sections.size()) i = 0;
+#else
         typeof(sections.size()) i = 0;
+#endif
         for (const auto &s : sections) {
             arr[i++] = s.ToJson();
         }
-        obj["section"] = arr;
+        obj[as_wstring_on_win32("section")] = arr;
     }
     if (relatesTo.IsSet()) {
         auto rel = web::json::value::object();
         if (!relatesToCode.empty()) {
-            rel["code"] = web::json::value::string(relatesToCode);
+            rel[as_wstring_on_win32("code")] = web::json::value::string(as_wstring_on_win32(relatesToCode));
         }
-        rel["targetIdentifier"] = relatesTo.ToJson();
-        obj["relatesTo"] = rel;
+        rel[as_wstring_on_win32("targetIdentifier")] = relatesTo.ToJson();
+        obj[as_wstring_on_win32("relatesTo")] = rel;
     }
     if (!attester.empty()) {
         auto att = web::json::value::array(attester.size());
+#ifdef WIN32
+        decltype(attester.size()) j = 0;
+#else
         typeof(attester.size()) j = 0;
+#endif
         for (const auto &at: attester) {
             att[j++] = at.ToJson();
         }
-        obj["attester"] = att;
+        obj[as_wstring_on_win32("attester")] = att;
     }
     return obj;
 }
@@ -115,49 +129,49 @@ FhirComposition FhirComposition::Parse(const web::json::value &obj) {
         throw std::exception();
     }
 
-    if(obj.has_object_field("identifier"))
-        comp.identifier = FhirIdentifier::Parse(obj.at("identifier"));
+    if(obj.has_object_field(as_wstring_on_win32("identifier")))
+        comp.identifier = FhirIdentifier::Parse(obj.at(as_wstring_on_win32("identifier")));
 
-    if(obj.has_object_field("type"))
-        comp.type = FhirCodeableConcept::Parse(obj.at("type"));
+    if(obj.has_object_field(as_wstring_on_win32("type")))
+        comp.type = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("type")));
 
-    if(obj.has_object_field("subject"))
-        comp.subject = FhirReference::Parse(obj.at("subject"));
+    if(obj.has_object_field(as_wstring_on_win32("subject")))
+        comp.subject = FhirReference::Parse(obj.at(as_wstring_on_win32("subject")));
 
-    if(obj.has_array_field("author")) {
-        web::json::array authors_arr = obj.at("author").as_array();
+    if(obj.has_array_field(as_wstring_on_win32("author"))) {
+        web::json::array authors_arr = obj.at(as_wstring_on_win32("author")).as_array();
 
         for(int i=0; i<authors_arr.size(); i++) {
             comp.authors.push_back(FhirReference::Parse(authors_arr[i]));
         }
     }
 
-    if(obj.has_string_field("title"))
-        comp.title = obj.at("title").as_string();
+    if(obj.has_string_field(as_wstring_on_win32("title")))
+        comp.title = from_wstring_on_win32(obj.at(as_wstring_on_win32("title")).as_string());
 
-    if(obj.has_string_field("confidentiality"))
-        comp.confidentiality = obj.at("confidentiality").as_string();
+    if(obj.has_string_field(as_wstring_on_win32("confidentiality")))
+        comp.confidentiality = from_wstring_on_win32(obj.at(as_wstring_on_win32("confidentiality")).as_string());
 
-    if(obj.has_array_field("section")) {
-        web::json::array sections_arr = obj.at("section").as_array();
+    if(obj.has_array_field(as_wstring_on_win32("section"))) {
+        web::json::array sections_arr = obj.at(as_wstring_on_win32("section")).as_array();
 
         for(int i=0; i<sections_arr.size(); i++) {
             comp.sections.push_back(FhirCompositionSection::Parse(sections_arr[i]));
         }
     }
 
-    if (obj.has_object_field("relatesTo")) {
-        auto rel = obj.at("relatesTo");
-        if (rel.has_string_field("code")) {
-            comp.relatesToCode = rel.at("code").as_string();
+    if (obj.has_object_field(as_wstring_on_win32("relatesTo"))) {
+        auto rel = obj.at(as_wstring_on_win32("relatesTo"));
+        if (rel.has_string_field(as_wstring_on_win32("code"))) {
+            comp.relatesToCode = from_wstring_on_win32(rel.at(as_wstring_on_win32("code")).as_string());
         }
-        if (rel.has_object_field("targetIdentifier")) {
-            comp.relatesTo = FhirIdentifier::Parse(rel.at("targetIdentifier"));
+        if (rel.has_object_field(as_wstring_on_win32("targetIdentifier"))) {
+            comp.relatesTo = FhirIdentifier::Parse(rel.at(as_wstring_on_win32("targetIdentifier")));
         }
     }
 
-    if (obj.has_array_field("attester")) {
-        web::json::array attester_arr = obj.at("attester").as_array();
+    if (obj.has_array_field(as_wstring_on_win32("attester"))) {
+        web::json::array attester_arr = obj.at(as_wstring_on_win32("attester")).as_array();
 
         for (int i = 0; i < attester_arr.size(); i++) {
             comp.attester.push_back(FhirAttester::Parse(attester_arr[i]));

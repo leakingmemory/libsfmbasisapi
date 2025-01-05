@@ -4,38 +4,52 @@
 
 #include <fhir/person.h>
 
+#include "../win32/w32strings.h"
+
 web::json::value FhirPerson::ToJson() const {
     auto obj = Fhir::ToJson();
     if (!identifiers.empty()) {
         auto arr = web::json::value::array(identifiers.size());
+#ifdef WIN32
+        decltype(identifiers.size()) i = 0;
+#else
         typeof(identifiers.size()) i = 0;
+#endif
         for (const auto &identifier : identifiers) {
             arr[i++] = identifier.ToJson();
         }
-        obj["identifier"] = arr;
+        obj[as_wstring_on_win32("identifier")] = arr;
     }
-    obj["active"] = web::json::value::boolean(active);
+    obj[as_wstring_on_win32("active")] = web::json::value::boolean(active);
     if (!name.empty()) {
         auto arr = web::json::value::array(name.size());
+#ifdef WIN32
+        decltype(name.size()) i = 0;
+#else
         typeof(name.size()) i = 0;
+#endif
         for (const auto &n : name) {
             arr[i++] = n.ToJson();
         }
-        obj["name"] = arr;
+        obj[as_wstring_on_win32("name")] = arr;
     }
     if (!gender.empty()) {
-        obj["gender"] = web::json::value::string(gender);
+        obj[as_wstring_on_win32("gender")] = web::json::value::string(as_wstring_on_win32(gender));
     }
     if (!birthDate.empty()) {
-        obj["birthDate"] = web::json::value::string(birthDate);
+        obj[as_wstring_on_win32("birthDate")] = web::json::value::string(as_wstring_on_win32(birthDate));
     }
     if (!address.empty()) {
         auto arr = web::json::value::array(address.size());
+#ifdef WIN32
+        decltype(address.size()) i = 0;
+#else
         typeof(address.size()) i = 0;
+#endif
         for (const auto &a : address) {
             arr[i++] = a.ToJson();
         }
-        obj["address"] = arr;
+        obj[as_wstring_on_win32("address")] = arr;
     }
     return obj;
 }
@@ -47,33 +61,33 @@ FhirPerson FhirPerson::Parse(const web::json::value &obj) {
         throw std::exception();
     }
 
-    if(obj.has_array_field("identifier")) {
-        auto arr = obj.at("identifier").as_array();
+    if(obj.has_array_field(as_wstring_on_win32("identifier"))) {
+        auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
         for(const auto &identifierVal : arr) {
             practitioner.identifiers.push_back(FhirIdentifier::Parse(identifierVal));
         }
     }
 
-    if(obj.has_boolean_field("active")) {
-        practitioner.active = obj.at("active").as_bool();
+    if(obj.has_boolean_field(as_wstring_on_win32("active"))) {
+        practitioner.active = obj.at(as_wstring_on_win32("active")).as_bool();
     }
 
-    if(obj.has_array_field("name")) {
-        for (const auto &n : obj.at("name").as_array()) {
+    if(obj.has_array_field(as_wstring_on_win32("name"))) {
+        for (const auto &n : obj.at(as_wstring_on_win32("name")).as_array()) {
             practitioner.name.emplace_back(FhirName::Parse(n));
         }
     }
 
-    if(obj.has_string_field("gender")) {
-        practitioner.gender = obj.at("gender").as_string();
+    if(obj.has_string_field(as_wstring_on_win32("gender"))) {
+        practitioner.gender = from_wstring_on_win32(obj.at(as_wstring_on_win32("gender")).as_string());
     }
 
-    if(obj.has_string_field("birthDate")) {
-        practitioner.birthDate = obj.at("birthDate").as_string();
+    if(obj.has_string_field(as_wstring_on_win32("birthDate"))) {
+        practitioner.birthDate = from_wstring_on_win32(obj.at(as_wstring_on_win32("birthDate")).as_string());
     }
 
-    if (obj.has_array_field("address")) {
-        for (const auto &a : obj.at("address").as_array()) {
+    if (obj.has_array_field(as_wstring_on_win32("address"))) {
+        for (const auto &a : obj.at(as_wstring_on_win32("address")).as_array()) {
             practitioner.address.push_back(FhirAddress::Parse(a));
         }
     }
