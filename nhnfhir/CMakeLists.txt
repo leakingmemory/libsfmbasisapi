@@ -1,5 +1,5 @@
 
-add_library(nhnfhir OBJECT KjRfErrorCode.cpp)
+add_library(nhnfhir OBJECT KjRfErrorCode.cpp SfmBandaPrescription.cpp)
 
 add_dependencies(nhnfhir "cpplevel.h")
 
