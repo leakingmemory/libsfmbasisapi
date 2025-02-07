@@ -3,9 +3,7 @@
 //
 
 #include <fhir/fhir.h>
-#ifdef WIN32
 #include "../win32/w32strings.h"
-#endif
 
 web::json::value FhirValueExtension::ToJson() const {
     auto obj = FhirExtension::ToJson();
