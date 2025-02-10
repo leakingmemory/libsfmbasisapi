@@ -12,6 +12,7 @@ public:
     SfmBandaPrescription();
     SfmBandaPrescription(const FhirBasic &);
     SfmBandaPrescription(FhirBasic &&);
+    static bool CanHandle(const FhirBasic &);
     void SetProductGroup(const FhirCodeableConcept &codeable);
     FhirCodeableConcept GetProductGroup() const;
     std::string GetDisplay() const override;

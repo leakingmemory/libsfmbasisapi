@@ -18,6 +18,18 @@ SfmBandaPrescription::SfmBandaPrescription(const FhirBasic &basic) : FhirBasic(b
 SfmBandaPrescription::SfmBandaPrescription(FhirBasic &&basic) : FhirBasic(std::move(basic)) {
 }
 
+bool SfmBandaPrescription::CanHandle(const FhirBasic &basic) {
+    auto codings = basic.GetCode().GetCoding();
+    if (codings.empty() || codings[0].GetSystem() != "urn:oid:2.16.578.1.12.4.1.1.7402" || codings[0].GetCode() != "A") {
+        return false;
+    }
+    auto profiles = basic.GetProfile();
+    if (profiles.empty() || profiles[0] != "http://ehelse.no/fhir/StructureDefinition/sfm-BandaPrescription") {
+        return false;
+    }
+    return true;
+}
+
 void SfmBandaPrescription::SetProductGroup(const FhirCodeableConcept &codeable) {
     auto value = std::make_shared<FhirCodeableConceptValue>(codeable);
     auto extensions = GetExtensions();
