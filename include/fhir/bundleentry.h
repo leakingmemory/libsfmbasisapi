@@ -30,8 +30,14 @@ public:
     [[nodiscard]] std::string GetFullUrl() const {
         return fullUrl;
     }
+    void SetFullUrl(const std::string url) {
+        fullUrl = url;
+    }
     [[nodiscard]] std::shared_ptr<Fhir> GetResource() const {
         return resource;
+    }
+    void SetResource(const std::shared_ptr<Fhir> &res) {
+        resource = res;
     }
     web::json::value ToJson() const;
     static FhirBundleEntry Parse(const web::json::value &obj);
