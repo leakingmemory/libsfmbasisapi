@@ -7,6 +7,7 @@
 
 #include "fhirobject.h"
 #include <vector>
+#include <memory>
 
 class Fhir;
 class FhirValue;

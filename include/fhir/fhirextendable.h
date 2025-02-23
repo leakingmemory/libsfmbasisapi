@@ -8,6 +8,7 @@
 #include "fhirobject.h"
 #include "fhirconcepts.h"
 #include <vector>
+#include <memory>
 
 class FhirExtension;
 
