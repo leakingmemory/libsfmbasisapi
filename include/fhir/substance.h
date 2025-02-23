@@ -9,6 +9,7 @@
 #include "value.h"
 
 class FhirSubstance : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
@@ -20,9 +21,9 @@ public:
     [[nodiscard]] FhirCodeableConcept getCode() const {
         return code;
     }
-
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirSubstance Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirSubstance Parse(const json &obj);
 };
 
 #endif //SFMBASISFAKER_SUBSTANCE_H

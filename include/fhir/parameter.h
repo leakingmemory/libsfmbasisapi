@@ -10,8 +10,10 @@
 
 class Fhir;
 class FhirValue;
+class FhirParameters;
 
 class FhirParameter : public FhirObject {
+    friend FhirParameters;
 private:
     std::shared_ptr<Fhir> resource;
     std::shared_ptr<FhirValue> value;
@@ -26,8 +28,9 @@ public:
     [[nodiscard]] std::shared_ptr<FhirValue> GetFhirValue() const { return value; }
     [[nodiscard]] std::vector<std::shared_ptr<FhirParameter>> GetPart() const { return part; }
     [[nodiscard]] std::string GetName() const { return name; }
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirParameter Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const;
+    static FhirParameter Parse(const json &obj);
 };
 
 #endif //SFMBASISFAKER_PARAMETER_H

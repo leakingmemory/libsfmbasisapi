@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
         json = sstr.str();
         input.close();
     }
-    auto operationOutcome = FhirOperationOutcome::Parse(Fhir::Parse(web::json::value::parse(json))->ToJson());
+    auto operationOutcome = FhirOperationOutcome::ParseJson(Fhir::ParseJson(json)->ToJson());
     AreEqual("OperationOutcome", operationOutcome.GetResourceType());
     AreEqual("3af258ec-235e-43d0-be4d-08ac01bad64c", operationOutcome.GetId());
     auto issues = operationOutcome.GetIssue();

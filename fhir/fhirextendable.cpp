@@ -4,34 +4,35 @@
 
 #include <fhir/fhirextendable.h>
 #include <fhir/extension.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-bool FhirExtendable::ParseInline(const web::json::value &json) {
-    if (json.has_array_field(as_wstring_on_win32("extension"))) {
-        for (const auto &ext : json.at(as_wstring_on_win32("extension")).as_array()) {
-            extensions.emplace_back(FhirExtension::Parse(ext));
+bool FhirExtendable::ParseInline(const json &json) {
+    if (json.contains("extension")) {
+        auto extensionArr = json["extension"];
+        if (extensionArr.is_array()) {
+            for (const auto &ext: extensionArr) {
+                extensions.emplace_back(FhirExtension::ParseObj(ext));
+            }
         }
     }
     return true;
 }
 
-void FhirExtendable::ToJsonInline(web::json::value &json) const {
+void FhirExtendable::ToJsonInline(json &json) const {
     FhirObject::ToJsonInline(json);
     if (!extensions.empty()) {
-        auto arr = web::json::value::array(extensions.size());
-#ifdef WIN32
-        decltype(extensions.size()) i = 0;
-#else
-        typeof(extensions.size()) i = 0;
-#endif
+        auto arr = nlohmann::json::array();
         for (const auto &ext : extensions) {
-            arr[i++] = ext->ToJson();
+            arr.push_back(ext->ToJsonObj());
         }
-        json[as_wstring_on_win32("extension")] = arr;
+        json["extension"] = arr;
     }
 }
 
-web::json::value FhirExtendable::ToJson() const {
+json FhirExtendable::ToJsonObj() const {
+    return FhirObject::ToJsonObj();
+}
+
+std::string FhirExtendable::ToJson() const {
     return FhirObject::ToJson();
 }

@@ -3,128 +3,131 @@
 //
 
 #include <fhir/allergy.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirReaction::ToJson() const {
-    web::json::value json = web::json::value::object();
+json FhirReaction::ToJsonObj() const {
+    json json{};
     {
-        auto manifestationArray = web::json::value::array();
-        auto i = 0;
+        auto manifestationArray = nlohmann::json::array();
         for (const auto &m : manifestation) {
             if (m.IsSet()) {
-                manifestationArray[i++] = m.ToJson();
+                manifestationArray.push_back(m.ToJsonObj());
             }
         }
-        json[as_wstring_on_win32("manifestation")] = manifestationArray;
+        json["manifestation"] = manifestationArray;
     }
     return json;
 }
 
-FhirReaction FhirReaction::Parse(const web::json::value &obj) {
+FhirReaction FhirReaction::Parse(const json &obj) {
     FhirReaction reaction{};
-    if (obj.has_array_field(as_wstring_on_win32("manifestation"))) {
-        auto arr = obj.at(as_wstring_on_win32("manifestation")).as_array();
-        for (const auto &v : arr) {
-            reaction.manifestation.emplace_back(FhirCodeableConcept::Parse(v));
+    if (obj.contains("manifestation")) {
+        auto arr = obj["manifestation"];
+        if (arr.is_array()) {
+            for (const auto &v: arr) {
+                reaction.manifestation.emplace_back(FhirCodeableConcept::Parse(v));
+            }
         }
     }
     return reaction;
 }
 
-web::json::value FhirAllergyIntolerance::ToJson() const {
-    auto json = Fhir::ToJson();
+json FhirAllergyIntolerance::ToJsonObj() const {
+    auto json = Fhir::ToJsonObj();
     {
-        auto arr = web::json::value::array();
-        auto i = 0;
+        auto arr = nlohmann::json::array();
         for (const auto &v : identifier) {
-            arr[i++] = v.ToJson();
+            arr.push_back(v.ToJsonObj());
         }
-        json[as_wstring_on_win32("identifier")] = arr;
+        json["identifier"] = arr;
     }
     {
-        auto arr = web::json::value::array();
-        auto i = 0;
+        auto arr = nlohmann::json::array();
         for (const auto &v : reaction) {
-            arr[i++] = v.ToJson();
+            arr.push_back(v.ToJsonObj());
         }
-        json[as_wstring_on_win32("reaction")] = arr;
+        json["reaction"] = arr;
     }
     {
-        auto arr = web::json::value::array();
-        auto i = 0;
+        auto arr = nlohmann::json::array();
         for (const auto &v : category) {
-            arr[i++] = web::json::value::string(as_wstring_on_win32(v));
+            arr.push_back(v);
         }
-        json[as_wstring_on_win32("category")] = arr;
+        json["category"] = arr;
     }
     if (clinicalStatus.IsSet()) {
-        json[as_wstring_on_win32("clinicalStatus")] = clinicalStatus.ToJson();
+        json["clinicalStatus"] = clinicalStatus.ToJsonObj();
     }
     if (code.IsSet()) {
-        json[as_wstring_on_win32("code")] = code.ToJson();
+        json["code"] = code.ToJsonObj();
     }
     if (verificationStatus.IsSet()) {
-        json[as_wstring_on_win32("verificationStatus")] = verificationStatus.ToJson();
+        json["verificationStatus"] = verificationStatus.ToJsonObj();
     }
     if (patient.IsSet()) {
-        json[as_wstring_on_win32("patient")] = patient.ToJson();
+        json["patient"] = patient.ToJsonObj();
     }
     if (recorder.IsSet()) {
-        json[as_wstring_on_win32("recorder")] = recorder.ToJson();
+        json["recorder"] = recorder.ToJsonObj();
     }
     if (!criticality.empty()) {
-        json[as_wstring_on_win32("criticality")] = web::json::value::string(as_wstring_on_win32(criticality));
+        json["criticality"] = criticality;
     }
     if (!recordedDate.empty()) {
-        json[as_wstring_on_win32("recordedDate")] = web::json::value::string(as_wstring_on_win32(recordedDate));
+        json["recordedDate"] = recordedDate;
     }
     return json;
 }
 
-FhirAllergyIntolerance FhirAllergyIntolerance::Parse(const web::json::value &obj) {
+FhirAllergyIntolerance FhirAllergyIntolerance::Parse(const json &obj) {
     FhirAllergyIntolerance allergyIntolerance{};
     if (!allergyIntolerance.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_array_field(as_wstring_on_win32("identifier"))) {
-        auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
-        for (const auto &v : arr) {
-            allergyIntolerance.identifier.emplace_back(FhirIdentifier::Parse(v));
+    if (obj.contains("identifier")) {
+        auto arr = obj["identifier"];
+        if (arr.is_array()) {
+            for (const auto &v: arr) {
+                allergyIntolerance.identifier.emplace_back(FhirIdentifier::ParseObj(v));
+            }
         }
     }
-    if (obj.has_array_field(as_wstring_on_win32("reaction"))) {
-        auto arr = obj.at(as_wstring_on_win32("reaction")).as_array();
-        for (const auto &v : arr) {
-            allergyIntolerance.reaction.emplace_back(FhirReaction::Parse(v));
+    if (obj.contains("reaction")) {
+        auto arr = obj["reaction"];
+        if (arr.is_array()) {
+            for (const auto &v: arr) {
+                allergyIntolerance.reaction.emplace_back(FhirReaction::Parse(v));
+            }
         }
     }
-    if (obj.has_array_field(as_wstring_on_win32("category"))) {
-        auto arr = obj.at(as_wstring_on_win32("category")).as_array();
-        for (const auto &v : arr) {
-            allergyIntolerance.category.emplace_back(from_wstring_on_win32(v.as_string()));
+    if (obj.contains("category")) {
+        auto arr = obj["category"];
+        if (arr.is_array()) {
+            for (const auto &v: arr) {
+                allergyIntolerance.category.emplace_back(v);
+            }
         }
     }
-    if (obj.has_object_field(as_wstring_on_win32("clinicalStatus"))) {
-        allergyIntolerance.clinicalStatus = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("clinicalStatus")));
+    if (obj.contains("clinicalStatus")) {
+        allergyIntolerance.clinicalStatus = FhirCodeableConcept::Parse(obj["clinicalStatus"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("code"))) {
-        allergyIntolerance.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
+    if (obj.contains("code")) {
+        allergyIntolerance.code = FhirCodeableConcept::Parse(obj["code"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("verificationStatus"))) {
-        allergyIntolerance.verificationStatus = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("verificationStatus")));
+    if (obj.contains("verificationStatus")) {
+        allergyIntolerance.verificationStatus = FhirCodeableConcept::Parse(obj["verificationStatus"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("patient"))) {
-        allergyIntolerance.patient = FhirReference::Parse(obj.at(as_wstring_on_win32("patient")));
+    if (obj.contains("patient")) {
+        allergyIntolerance.patient = FhirReference::ParseObj(obj["patient"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("recorder"))) {
-        allergyIntolerance.recorder = FhirReference::Parse(obj.at(as_wstring_on_win32("recorder")));
+    if (obj.contains("recorder")) {
+        allergyIntolerance.recorder = FhirReference::ParseObj(obj["recorder"]);
     }
-    if (obj.has_string_field(as_wstring_on_win32("criticality"))) {
-        allergyIntolerance.criticality = from_wstring_on_win32(obj.at(as_wstring_on_win32("criticality")).as_string());
+    if (obj.contains("criticality")) {
+        allergyIntolerance.criticality = obj["criticality"];
     }
-    if (obj.has_string_field(as_wstring_on_win32("recordedDate"))) {
-        allergyIntolerance.recordedDate = from_wstring_on_win32(obj.at(as_wstring_on_win32("recordedDate")).as_string());
+    if (obj.contains("recordedDate")) {
+        allergyIntolerance.recordedDate = obj["recordedDate"];
     }
     return allergyIntolerance;
 }

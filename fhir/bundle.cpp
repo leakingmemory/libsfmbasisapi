@@ -4,8 +4,7 @@
 
 #include <fhir/bundle.h>
 #include <fhir/value.h>
-
-#include "../win32/w32strings.h"
+#include "json.h"
 
 void FhirBundle::AddLink(const std::string &relation, const std::string &url) {
     link.emplace_back(relation, url);
@@ -27,61 +26,57 @@ void FhirBundle::SetEntries(const std::vector<FhirBundleEntry> &entries) {
     this->entries = entries;
 }
 
-web::json::value FhirBundle::ToJson() const {
-    auto obj = Fhir::ToJson();
-    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Bundle"));
+json FhirBundle::ToJsonObj() const {
+    auto obj = Fhir::ToJsonObj();
+    obj["resourceType"] = "Bundle";
     if (!type.empty()) {
-        obj[as_wstring_on_win32("type")] = web::json::value::string(as_wstring_on_win32(type));
+        obj["type"] = type;
     }
     if (!link.empty()) {
-        auto arr = web::json::value::array(link.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(link.size()) i = 0;
-#else
-        typeof(link.size()) i = 0;
-#endif
         for (const auto &l : link) {
-            arr[i++] = l.ToJson();
+            arr.push_back(l.ToJsonObj());
         }
-        obj[as_wstring_on_win32("link")] = arr;
+        obj["link"] = arr;
     }
-    obj[as_wstring_on_win32("total")] = web::json::value::number(entries.size());
-    auto arr = web::json::value::array(entries.size());
-#ifdef WIN32
+    obj["total"] = entries.size();
+    auto arr = nlohmann::json::array();
     decltype(entries.size()) i = 0;
-#else
-    typeof(entries.size()) i = 0;
-#endif
     for (const auto &e : entries) {
-        arr[i++] = e.ToJson();
+        arr.push_back(e.ToJsonObj());
     }
-    obj[as_wstring_on_win32("entry")] = arr;
+    obj["entry"] = arr;
     return obj;
 }
 
-FhirBundle FhirBundle::Parse(const web::json::value &obj) {
+FhirBundle FhirBundle::ParseObj(const json &obj) {
     FhirBundle bundle{};
 
     if (!bundle.ParseInline(obj)) {
         throw std::exception();
     }
 
-    if (obj.has_string_field(as_wstring_on_win32("type"))) {
-        bundle.type = from_wstring_on_win32(obj.at(as_wstring_on_win32("type")).as_string());
+    if (obj.contains("type")) {
+        bundle.type = obj["type"];
     }
-    if (obj.has_number_field(as_wstring_on_win32("total"))) {
-        bundle.total = obj.at(as_wstring_on_win32("total")).as_number().to_int32();
+    if (obj.contains("total")) {
+        bundle.total = obj["total"];
     }
-    if (obj.has_array_field(as_wstring_on_win32("link"))) {
-        for (const auto &value : obj.at(as_wstring_on_win32("link")).as_array()) {
-            bundle.link.push_back(FhirLink::Parse(value));
+    if (obj.contains("link")) {
+        for (const auto &value : obj["link"]) {
+            bundle.link.push_back(FhirLink::ParseObj(value));
         }
     }
-    if (obj.has_array_field(as_wstring_on_win32("entry"))) {
-        for (const auto &value : obj.at(as_wstring_on_win32("entry")).as_array()) {
+    if (obj.contains("entry")) {
+        for (const auto &value : obj["entry"]) {
             bundle.entries.push_back(FhirBundleEntry::Parse(value));
         }
     }
 
     return bundle;
+}
+
+FhirBundle FhirBundle::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }

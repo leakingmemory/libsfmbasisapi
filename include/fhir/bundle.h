@@ -9,6 +9,7 @@
 #include "bundleentry.h"
 
 class FhirBundle : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirLink> link{};
     std::vector<FhirBundleEntry> entries{};
@@ -31,9 +32,11 @@ public:
     }
     int GetTotal() const { return total; }
 
-    web::json::value ToJson() const;
-    static FhirBundle Parse(const web::json::value &obj);
-
+protected:
+    json ToJsonObj() const override;
+    static FhirBundle ParseObj(const json &obj);
+public:
+    static FhirBundle ParseJson(const std::string &);
 };
 
 #endif //SFMBASISFAKER_BUNDLE_H

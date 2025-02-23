@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         json = sstr.str();
         input.close();
     }
-    auto medication = FhirMedication::Parse(FhirMedication::Parse(web::json::value::parse(json)).ToJson());
+    auto medication = FhirMedication::ParseJson(FhirMedication::ParseJson(json).ToJson());
     AreEqual("Medication", medication.GetResourceType());
     AreEqual("43033452", medication.GetId());
     AreEqual("http://ehelse.no/fhir/StructureDefinition/sfm-Magistrell-Medication", medication.GetProfile().at(0));

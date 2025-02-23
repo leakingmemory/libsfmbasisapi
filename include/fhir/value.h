@@ -6,8 +6,10 @@
 #define SFMBASISFAKER_VALUE_H
 
 #include "fhir.h"
+#include <cmath>
 
 class FhirString : public FhirValue {
+    friend FhirValue;
 private:
     std::string value;
 public:
@@ -18,14 +20,19 @@ public:
         return "valueString";
     }
     std::string GetPropertyName() const override;
-    web::json::value ToJson() const override;
-    static std::shared_ptr<FhirString> Parse(const web::json::value &value);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirString> Parse(const json &value);
+public:
     std::string GetValue() const {
         return value;
     }
 };
 
+class FhirCodeableConcept;
+
 class FhirCoding : public FhirObject {
+    friend FhirCodeableConcept;
 private:
     std::string system;
     std::string code;
@@ -36,8 +43,11 @@ public:
         system(system), code(code), display(display) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirCoding(std::string &&system, std::string &&code, std::string &&display) :
             system(std::move(system)), code(std::move(code)), display(std::move(display)) {}
-    web::json::value ToJson() const override;
-    static FhirCoding Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static FhirCoding ParseObj(const json &obj);
+public:
+    static FhirCoding ParseJson(const std::string &);
     std::string GetSystem() const {
         return system;
     }
@@ -49,7 +59,28 @@ public:
     }
 };
 
+class FhirIdentifier;
+class FhirMedication;
+class FhirCompositionSection;
+class FhirComposition;
+class FhirSubstance;
+class FhirBasic;
+class FhirPractitionerRole;
+class FhirReaction;
+class FhirAllergyIntolerance;
+class FhirOperationOutcome;
+
 class FhirCodeableConcept : public FhirExtendable {
+    friend FhirIdentifier;
+    friend FhirMedication;
+    friend FhirCompositionSection;
+    friend FhirComposition;
+    friend FhirSubstance;
+    friend FhirBasic;
+    friend FhirPractitionerRole;
+    friend FhirReaction;
+    friend FhirAllergyIntolerance;
+    friend FhirOperationOutcome;
 private:
     std::vector<FhirCoding> coding;
     std::string text;
@@ -63,8 +94,10 @@ public:
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(std::string &&system, std::string &&code, std::string &&name)
             : coding({{std::move(system), std::move(code), std::move(name)}}), text() {}
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConcept(const std::string &text) : coding(), text(text) {}
-    [[nodiscard]] web::json::value ToJson() const override;
-    static FhirCodeableConcept Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirCodeableConcept Parse(const json &obj);
+public:
     [[nodiscard]] std::vector<FhirCoding> GetCoding() const {
         return coding;
     }
@@ -77,6 +110,7 @@ public:
 };
 
 class FhirCodingValue : public FhirValue, public FhirCoding {
+    friend FhirValue;
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirCodingValue() {}
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodingValue(const std::string &system, const std::string &code, const std::string &display) : FhirCoding(system, code, display) {}
@@ -87,11 +121,13 @@ public:
         return "valueCoding";
     }
     std::string GetPropertyName() const override;
-    [[nodiscard]] web::json::value ToJson() const override;
-    static std::shared_ptr<FhirCodingValue> Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static std::shared_ptr<FhirCodingValue> Parse(const json &obj);
 };
 
 class FhirCodeableConceptValue : public FhirValue, public FhirCodeableConcept {
+    friend FhirValue;
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirCodeableConceptValue() {}
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit FhirCodeableConceptValue(const std::vector<FhirCoding> &coding) : FhirCodeableConcept(coding) {}
@@ -103,11 +139,17 @@ public:
         return "valueCodeableConcept";
     }
     std::string GetPropertyName() const override;
-    [[nodiscard]] web::json::value ToJson() const override;
-    static std::shared_ptr<FhirCodeableConceptValue> Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static std::shared_ptr<FhirCodeableConceptValue> Parse(const json &obj);
+public:
+    [[nodiscard]] std::string ToJson() const override;
 };
 
+class FhirRatio;
+
 class FhirQuantity : public FhirObject {
+    friend FhirRatio;
 private:
     std::string unit;
     long milliValue;
@@ -124,22 +166,31 @@ public:
     bool IsSet() const {
         return isSet;
     }
-    web::json::value ToJson() const;
-    static FhirQuantity Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirQuantity ParseObj(const json &obj);
+public:
+    static FhirQuantity ParseJson(const std::string &);
 };
 
 class FhirQuantityValue : public FhirValue, public FhirQuantity {
+    friend FhirValue;
 public:
     explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirQuantityValue(const FhirQuantity &q) : FhirQuantity(q) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING static std::string PropertyName() {
         return "valueQuantity";
     }
     std::string GetPropertyName() const override;
-    [[nodiscard]] web::json::value ToJson() const override;
-    static std::shared_ptr<FhirQuantityValue> Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static std::shared_ptr<FhirQuantityValue> Parse(const json &obj);
 };
 
+class FhirIngredient;
+
 class FhirRatio : public FhirExtendable {
+    friend FhirIngredient;
+    friend FhirMedication;
 private:
     FhirQuantity numerator;
     FhirQuantity denominator;
@@ -158,11 +209,33 @@ public:
     bool IsSet() const {
         return numerator.IsSet() || denominator.IsSet();
     }
-    web::json::value ToJson() const;
-    static FhirRatio Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirRatio ParseObj(const json &obj);
+public:
+    static FhirRatio ParseJson(const std::string &);
 };
 
+class FhirReference;
+class FhirMedication;
+class FhirMedicationStatement;
+class FhirComposition;
+class FhirPerson;
+class FhirSubstance;
+class FhirOrganization;
+class FhirBasic;
+class FhirAllergyIntolerance;
+
 class FhirIdentifier : public FhirObject {
+    friend FhirReference;
+    friend FhirMedication;
+    friend FhirMedicationStatement;
+    friend FhirComposition;
+    friend FhirPerson;
+    friend FhirSubstance;
+    friend FhirOrganization;
+    friend FhirBasic;
+    friend FhirAllergyIntolerance;
 private:
     FhirCodeableConcept type;
     std::string use;
@@ -201,11 +274,33 @@ public:
     bool IsSet() const {
         return !use.empty() || type.IsSet() || !system.empty() || !value.empty();
     }
-    web::json::value ToJson() const;
-    static FhirIdentifier Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirIdentifier ParseObj(const json &obj);
+public:
+    static FhirIdentifier ParseJson(const std::string &);
 };
 
+class FhirIngredient;
+class FhirMedicationStatement;
+class FhirCompositionSection;
+class FhirAttester;
+class FhirComposition;
+class FhirBasic;
+class FhirPractitionerRole;
+class FhirPartOfChain;
+
 class FhirReference : public FhirValue {
+    friend FhirIngredient;
+    friend FhirMedicationStatement;
+    friend FhirValue;
+    friend FhirCompositionSection;
+    friend FhirAttester;
+    friend FhirComposition;
+    friend FhirBasic;
+    friend FhirPractitionerRole;
+    friend FhirAllergyIntolerance;
+    friend FhirPartOfChain;
 private:
     FhirIdentifier identifier;
     std::string reference;
@@ -240,11 +335,17 @@ public:
     }
     std::string GetPropertyName() const override;
 
-    web::json::value ToJson() const;
-    static FhirReference Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static FhirReference ParseObj(const json &obj);
+public:
+    static FhirReference ParseJson(const std::string &);
 };
 
+class FhirBundle;
+
 class FhirLink : public FhirObject {
+    friend FhirBundle;
 private:
     std::string relation;
     std::string url;
@@ -261,11 +362,15 @@ public:
     bool IsSet() const {
         return !relation.empty() || !url.empty();
     }
-    web::json::value ToJson() const;
-    static FhirLink Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirLink ParseObj(const json &obj);
+public:
+    static FhirLink ParseJson(const std::string &);
 };
 
 class FhirName : public FhirObject {
+    friend FhirPerson;
 private:
     std::string use{};
     std::string family{};
@@ -291,12 +396,16 @@ public:
     bool IsSet() const {
         return !use.empty() || !family.empty() || !given.empty();
     }
-    web::json::value ToJson() const;
-    static FhirName Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirName ParseObj(const json &obj);
+public:
+    static FhirName ParseJson(const std::string &);
     std::string GetDisplay() const;
 };
 
 class FhirAddress : public FhirObject {
+    friend FhirPerson;
 private:
     std::vector<std::string> lines{};
     std::string use{};
@@ -328,11 +437,13 @@ public:
         return postalCode;
     }
 
-    web::json::value ToJson() const;
-    static FhirAddress Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirAddress Parse(const json &obj);
 };
 
 class FhirDateTimeValue : public FhirValue {
+    friend FhirValue;
 private:
     std::string dateTime;
 public:
@@ -346,11 +457,13 @@ public:
     }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
-    web::json::value ToJson() const;
-    static std::shared_ptr<FhirDateTimeValue> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirDateTimeValue> Parse(const json &obj);
 };
 
 class FhirBooleanValue : public FhirValue {
+    friend FhirValue;
 private:
     bool value;
 public:
@@ -364,11 +477,13 @@ public:
     }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
-    web::json::value ToJson() const;
-    static std::shared_ptr<FhirBooleanValue> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirBooleanValue> Parse(const json &obj);
 };
 
 class FhirIntegerValue : public FhirValue {
+    friend FhirValue;
 private:
     long value;
 public:
@@ -382,11 +497,13 @@ public:
     }
     static std::string PropertyName();
     std::string GetPropertyName() const override;
-    web::json::value ToJson() const;
-    static std::shared_ptr<FhirIntegerValue> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirIntegerValue> Parse(const json &obj);
 };
 
 class FhirDecimalValue : public FhirValue {
+    friend FhirValue;
 private:
     long long int value;
     int precision;
@@ -397,11 +514,13 @@ public:
     double GetValue() const;
     static std::string PropertyName();
     std::string GetPropertyName() const override;
-    web::json::value ToJson() const;
-    static std::shared_ptr<FhirDecimalValue> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirDecimalValue> Parse(const json &obj);
 };
 
 class FhirDateValue : public FhirValue {
+    friend FhirValue;
 private:
     std::string date;
 public:
@@ -411,8 +530,9 @@ public:
     std::string GetPropertyName() const override;
     std::string GetRawValue() const;
     void SetValue(const std::string &value);
-    web::json::value ToJson() const;
-    static std::shared_ptr<FhirDateValue> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<FhirDateValue> Parse(const json &obj);
 };
 
 

@@ -3,43 +3,40 @@
 //
 
 #include <fhir/organization.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirOrganization::ToJson() const {
-    auto obj = Fhir::ToJson();
-    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Organization"));
+json FhirOrganization::ToJsonObj() const {
+    auto obj = Fhir::ToJsonObj();
+    obj["resourceType"] = "Organization";
     if (!identifiers.empty()) {
-        auto arr = web::json::value::array(identifiers.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(identifiers.size()) i = 0;
-#else
-        typeof(identifiers.size()) i = 0;
-#endif
         for (const auto &identifier : identifiers) {
-            arr[i++] = identifier.ToJson();
+            arr.push_back(identifier.ToJsonObj());
         }
-        obj[as_wstring_on_win32("identifier")] = arr;
+        obj["identifier"] = arr;
     }
     if (!name.empty()) {
-        obj[as_wstring_on_win32("name")] = web::json::value::string(as_wstring_on_win32(name));
+        obj["name"] = name;
     }
     return obj;
 }
 
-FhirOrganization FhirOrganization::Parse(const web::json::value &obj) {
+FhirOrganization FhirOrganization::Parse(const json &obj) {
     FhirOrganization org{};
     if (!org.ParseInline(obj)) {
         throw std::exception();
     }
 
-    if (obj.has_string_field(as_wstring_on_win32("name"))) {
-        org.name = from_wstring_on_win32(obj.at(as_wstring_on_win32("name")).as_string());
+    if (obj.contains("name")) {
+        org.name = obj["name"];
     }
-    if (obj.has_array_field(as_wstring_on_win32("identifier"))){
-        auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
-        for (const auto &identifier : arr) {
-            org.identifiers.push_back(FhirIdentifier::Parse(identifier));
+    if (obj.contains("identifier")) {
+        auto arr = obj["identifier"];
+        if (arr.is_array()) {
+            for (const auto &identifier: arr) {
+                org.identifiers.push_back(FhirIdentifier::ParseObj(identifier));
+            }
         }
     }
     return org;

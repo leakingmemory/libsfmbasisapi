@@ -3,38 +3,32 @@
 //
 
 #include <fhir/fhirbasic.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirBasic::ToJson() const {
-    auto obj = Fhir::ToJson();
-    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Basic"));
+json FhirBasic::ToJsonObj() const {
+    auto obj = Fhir::ToJsonObj();
+    obj["resourceType"] = "Basic";
     if (subject.IsSet()) {
-        obj[as_wstring_on_win32("subject")] = subject.ToJson();
+        obj["subject"] = subject.ToJsonObj();
     }
     if (author.IsSet()) {
-        obj[as_wstring_on_win32("author")] = author.ToJson();
+        obj["author"] = author.ToJsonObj();
     }
     if (!identifiers.empty()) {
-        auto arr = web::json::value::array(identifiers.size());
-#ifdef WIN32
-        decltype(identifiers.size()) i = 0;
-#else
-        typeof(identifiers.size()) i = 0;
-#endif
+        auto arr = nlohmann::json::array();
         for (const auto &id : identifiers) {
-            arr[i++] = id.ToJson();
+            arr.push_back(id.ToJsonObj());
         }
-        obj[as_wstring_on_win32("identifier")] = arr;
+        obj["identifier"] = arr;
     }
     if (code.IsSet()) {
-        obj[as_wstring_on_win32("code")] = code.ToJson();
+        obj["code"] = code.ToJsonObj();
     }
     FhirPartOfChain::ToJsonInline(obj);
     return obj;
 }
 
-FhirBasic FhirBasic::Parse(const web::json::value &obj) {
+FhirBasic FhirBasic::Parse(const json &obj) {
     FhirBasic fhirBasic{};
 
     if (!fhirBasic.Fhir::ParseInline(obj)) {
@@ -43,20 +37,22 @@ FhirBasic FhirBasic::Parse(const web::json::value &obj) {
 
     fhirBasic.FhirPartOfChain::ParseInline(obj);
 
-    if (obj.has_field(as_wstring_on_win32("subject"))) {
-        fhirBasic.subject = FhirReference::Parse(obj.at(as_wstring_on_win32("subject")));
+    if (obj.contains("subject")) {
+        fhirBasic.subject = FhirReference::ParseObj(obj["subject"]);
     }
-    if (obj.has_field(as_wstring_on_win32("author"))) {
-        fhirBasic.author = FhirReference::Parse(obj.at(as_wstring_on_win32("author")));
+    if (obj.contains("author")) {
+        fhirBasic.author = FhirReference::ParseObj(obj["author"]);
     }
-    if (obj.has_field(as_wstring_on_win32("identifier"))) {
-        const auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
-        for (const auto &id : arr) {
-            fhirBasic.identifiers.push_back(FhirIdentifier::Parse(id));
+    if (obj.contains("identifier")) {
+        const auto arr = obj["identifier"];
+        if (arr.is_array()) {
+            for (const auto &id: arr) {
+                fhirBasic.identifiers.push_back(FhirIdentifier::ParseObj(id));
+            }
         }
     }
-    if (obj.has_field(as_wstring_on_win32("code"))) {
-        fhirBasic.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
+    if (obj.contains("code")) {
+        fhirBasic.code = FhirCodeableConcept::Parse(obj["code"]);
     }
 
     return fhirBasic;

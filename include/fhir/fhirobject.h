@@ -5,14 +5,23 @@
 #ifndef SFMBASISFAKER_FHIROBJECT_H
 #define SFMBASISFAKER_FHIROBJECT_H
 
-#include <cpprest/json.h>
+#include <string>
+
+struct json;
+class FhirParameter;
+class FhirValueExtension;
 
 class FhirObject {
+    friend FhirParameter;
+    friend FhirValueExtension;
 public:
     constexpr FhirObject() {}
     virtual ~FhirObject() = default;
-    virtual void ToJsonInline(web::json::value &json) const;
-    virtual web::json::value ToJson() const;
+protected:
+    virtual void ToJsonInline(json &json) const;
+    virtual json ToJsonObj() const;
+public:
+    [[nodiscard]] virtual std::string ToJson() const;
 };
 
 #endif //SFMBASISFAKER_FHIROBJECT_H

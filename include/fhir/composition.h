@@ -10,6 +10,7 @@
 #include "compositionsection.h"
 
 class FhirAttester {
+    friend FhirComposition;
 private:
     std::string mode{};
     std::string dateTime{};
@@ -21,11 +22,13 @@ public:
     void SetDateTime(const std::string &dateTime);
     [[nodiscard]] FhirReference GetParty() const;
     void SetParty(const FhirReference &);
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirAttester Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const;
+    static FhirAttester Parse(const json &obj);
 };
 
 class FhirComposition : public Fhir {
+    friend Fhir;
 private:
     FhirIdentifier identifier{};
     FhirCodeableConcept type{};
@@ -62,9 +65,9 @@ public:
     void SetRelatesToCode(const std::string &code) { this->relatesToCode = code; }
     void SetRelatesTo(const FhirIdentifier &relatesTo) { this->relatesTo = relatesTo; }
     void SetAttester(const std::vector<FhirAttester> &attester) { this->attester = attester; }
-
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirComposition Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirComposition Parse(const json &obj);
 };
 
 #endif //SFMBASISFAKER_COMPOSITION_H

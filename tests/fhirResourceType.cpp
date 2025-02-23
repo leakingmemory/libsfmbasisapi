@@ -15,7 +15,7 @@
 template <class T> void TestResourceType() {
     T parameters{};
     auto json = parameters.ToJson();
-    auto deserialized = Fhir::Parse(json);
+    auto deserialized = Fhir::ParseJson(json);
     auto parametersDeserialized = std::dynamic_pointer_cast<T>(deserialized);
     AreEqual(true, parametersDeserialized.operator bool());
 }

@@ -3,43 +3,40 @@
 //
 
 #include <fhir/substance.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirSubstance::ToJson() const {
-    auto obj = Fhir::ToJson();
-    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Substance"));
+json FhirSubstance::ToJsonObj() const {
+    auto obj = Fhir::ToJsonObj();
+    obj["resourceType"] = "Substance";
     if (!identifiers.empty()) {
-        auto arr = web::json::value::array(identifiers.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(identifiers.size()) i = 0;
-#else
-        typeof(identifiers.size()) i = 0;
-#endif
         for (const auto &identifier : identifiers) {
-            arr[i++] = identifier.ToJson();
+            arr.push_back(identifier.ToJsonObj());
         }
-        obj[as_wstring_on_win32("identifier")] = arr;
+        obj["identifier"] = arr;
     }
     if (code.IsSet()) {
-        obj[as_wstring_on_win32("code")] = code.ToJson();
+        obj["code"] = code.ToJsonObj();
     }
     return obj;
 }
 
-FhirSubstance FhirSubstance::Parse(const web::json::value &obj) {
+FhirSubstance FhirSubstance::Parse(const json &obj) {
     FhirSubstance substance{};
     if (!substance.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_field(as_wstring_on_win32("identifier"))) {
-        auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
-        for (const auto &val : arr) {
-            substance.identifiers.emplace_back(FhirIdentifier::Parse(val));
+    if (obj.contains("identifier")) {
+        auto arr = obj["identifier"];
+        if (arr.is_array()) {
+            for (const auto &val: arr) {
+                substance.identifiers.emplace_back(FhirIdentifier::ParseObj(val));
+            }
         }
     }
-    if (obj.has_field(as_wstring_on_win32("code"))) {
-        substance.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
+    if (obj.contains("code")) {
+        substance.code = FhirCodeableConcept::Parse(obj["code"]);
     }
     return substance;
 }

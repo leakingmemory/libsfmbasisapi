@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         input.close();
     }
     std::string assertions = argv[2];
-    auto getmed = FhirParameters::Parse(FhirParameters::Parse(web::json::value::parse(json)).ToJson());
+    auto getmed = FhirParameters::ParseJson(FhirParameters::ParseJson(json).ToJson());
     if (assertions == "request") {
         AreEqual("Parameters", getmed.GetResourceType());
         AreEqual(1, getmed.GetParameters().size());

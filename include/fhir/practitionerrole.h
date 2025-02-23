@@ -10,6 +10,7 @@
 #include <vector>
 
 class FhirPractitionerRole : public Fhir {
+    friend Fhir;
 private:
     FhirReference practitioner;
     FhirReference organization;
@@ -20,8 +21,9 @@ public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirPractitionerRole(const FhirReference &practitioner, const FhirReference &organization, const std::vector<FhirCodeableConcept> &code) : Fhir("PractitionerRole"), practitioner(practitioner), organization(organization), code(code) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirPractitionerRole(FhirReference &&practitioner, std::vector<FhirCodeableConcept> &&code) : Fhir("PractitionerRole"), practitioner(std::move(practitioner)), organization(), code(std::move(code)) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirPractitionerRole(FhirReference &&practitioner, FhirReference &&organization, std::vector<FhirCodeableConcept> &&code) : Fhir("PractitionerRole"), practitioner(std::move(practitioner)), organization(std::move(organization)), code(std::move(code)) {}
-    web::json::value ToJson() const;
-    static FhirPractitionerRole Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static FhirPractitionerRole Parse(const json &obj);
 };
 
 #endif //LIBSFMBASISAPI_PRACTITIONERROLE_H

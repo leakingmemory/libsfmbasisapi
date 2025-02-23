@@ -3,26 +3,29 @@
 //
 
 #include <fhir/dosage.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirDosage::ToJson() const {
-    auto obj = FhirExtendable::ToJson();
-    obj[as_wstring_on_win32("sequence")] = web::json::value::number(sequence);
-    obj[as_wstring_on_win32("text")] = web::json::value::string(as_wstring_on_win32(text));
+json FhirDosage::ToJsonObj() const {
+    auto obj = FhirExtendable::ToJsonObj();
+    obj["sequence"] = sequence;
+    obj["text"] = text;
     return obj;
 }
 
-FhirDosage FhirDosage::Parse(const web::json::value &obj) {
+FhirDosage FhirDosage::ParseObj(const json &obj) {
     FhirDosage dosage{};
     if (!dosage.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_number_field(as_wstring_on_win32("sequence"))) {
-        dosage.sequence = obj.at(as_wstring_on_win32("sequence")).as_number().to_int32();
+    if (obj.contains("sequence")) {
+        dosage.sequence = obj["sequence"];
     }
-    if (obj.has_string_field(as_wstring_on_win32("text"))) {
-        dosage.text = from_wstring_on_win32(obj.at(as_wstring_on_win32("text")).as_string());
+    if (obj.contains("text")) {
+        dosage.text = obj["text"];
     }
     return dosage;
+}
+
+FhirDosage FhirDosage::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }

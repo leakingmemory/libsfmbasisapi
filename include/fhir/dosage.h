@@ -7,7 +7,10 @@
 
 #include "fhirextendable.h"
 
+class FhirMedicationStatement;
+
 class FhirDosage : public FhirExtendable {
+    friend FhirMedicationStatement;
 private:
     std::string text;
     int sequence;
@@ -19,9 +22,11 @@ public:
     std::string GetText() const { return text; }
     int GetSequence() const { return sequence; }
 
-    web::json::value ToJson() const;
-    static FhirDosage Parse(const web::json::value &obj);
-
+protected:
+    json ToJsonObj() const;
+    static FhirDosage ParseObj(const json &obj);
+public:
+    static FhirDosage ParseJson(const std::string &);
 };
 
 #endif //SFMBASISFAKER_DOSAGE_H

@@ -10,16 +10,18 @@
 #include "fhirpartofchain.h"
 
 class FhirMedicationStatement : public Fhir, public FhirPartOfChain {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifiers{};
     std::vector<FhirDosage> dosage{};
     FhirReference medicationReference{};
     FhirReference subject{};
     std::string effectiveDateTime{};
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirMedicationStatement ParseObj(const json &obj);
 public:
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirMedicationStatement Parse(const web::json::value &obj);
-
+    static FhirMedicationStatement ParseJson(const std::string &);
     [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
     [[nodiscard]] std::vector<FhirDosage> GetDosage() const { return dosage; }
     [[nodiscard]] FhirReference GetMedicationReference() const { return medicationReference; }

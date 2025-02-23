@@ -8,6 +8,7 @@
 #include "value.h"
 
 class FhirCompositionSection : public FhirObject {
+    friend FhirComposition;
 private:
     FhirCodeableConcept code{};
     FhirCodeableConcept emptyReason{};
@@ -32,9 +33,9 @@ public:
     [[nodiscard]] std::string GetTitle() const { return title; }
     [[nodiscard]] std::string GetTextStatus() const { return textStatus; }
     [[nodiscard]] std::string GetTextXhtml() const { return textXhtml; }
-
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirCompositionSection Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirCompositionSection Parse(const json &obj);
 };
 
 #endif //SFMBASISFAKER_COMPOSITIONSECTION_H

@@ -3,12 +3,17 @@
 //
 
 #include <fhir/fhirobject.h>
+#include "json.h"
 
-void FhirObject::ToJsonInline(web::json::value &json) const {
+void FhirObject::ToJsonInline(json &json) const {
 }
 
-web::json::value FhirObject::ToJson() const {
-    auto json = web::json::value::object();
+json FhirObject::ToJsonObj() const {
+    json json{};
     ToJsonInline(json);
     return json;
+}
+
+std::string FhirObject::ToJson() const {
+    return ToJsonObj().dump();
 }

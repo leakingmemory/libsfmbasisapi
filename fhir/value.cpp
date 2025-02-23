@@ -3,22 +3,24 @@
 //
 
 #include <fhir/value.h>
-
-#include "../win32/w32strings.h"
+#include "json.h"
 
 std::string FhirString::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirString::ToJson() const {
-    return web::json::value::string(as_wstring_on_win32(value));
+json FhirString::ToJsonObj() const {
+    json v{};
+    v = value;
+    return v;
 }
 
-std::shared_ptr<FhirString> FhirString::Parse(const web::json::value &value) {
-    return std::make_shared<FhirString>(from_wstring_on_win32(value.as_string()));
+std::shared_ptr<FhirString> FhirString::Parse(const json &value) {
+    std::string str = value;
+    return std::make_shared<FhirString>(str);
 }
 
-std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, const web::json::value &property) {
+std::shared_ptr<FhirValue> FhirValue::ParseObj(const std::string &propertyName, const json &property) {
     if (propertyName == FhirString::PropertyName()) {
         return FhirString::Parse(property);
     }
@@ -41,7 +43,7 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
         return FhirCodingValue::Parse(property);
     }
     if (propertyName == FhirReference::PropertyName()) {
-        return std::make_shared<FhirReference>(FhirReference::Parse(property));
+        return std::make_shared<FhirReference>(FhirReference::ParseObj(property));
     }
     if (propertyName == FhirDateValue::PropertyName()) {
         return FhirDateValue::Parse(property);
@@ -52,65 +54,74 @@ std::shared_ptr<FhirValue> FhirValue::Parse(const std::string &propertyName, con
     throw FhirValueException(propertyName, "Value property not known");
 }
 
-web::json::value FhirCoding::ToJson() const {
-    auto obj = FhirObject::ToJson();
+std::shared_ptr<FhirValue> FhirValue::ParseJson(const std::string &propertyName, const std::string &property) {
+    return ParseObj(propertyName, nlohmann::json::parse(property));
+}
+
+json FhirCoding::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
     if (!system.empty())
-        obj[as_wstring_on_win32("system")] = web::json::value::string(as_wstring_on_win32(system));
+        obj["system"] = system;
     if (!code.empty())
-        obj[as_wstring_on_win32("code")] = web::json::value::string(as_wstring_on_win32(code));
+        obj["code"] = code;
     if (!display.empty())
-        obj[as_wstring_on_win32("display")] = web::json::value::string(as_wstring_on_win32(display));
+        obj["display"] = display;
     return obj;
 }
 
-FhirCoding FhirCoding::Parse(const web::json::value &obj) {
+FhirCoding FhirCoding::ParseObj(const json &obj) {
     std::string system{};
-    if (obj.has_string_field(as_wstring_on_win32("system"))) {
-        system = from_wstring_on_win32(obj.at(as_wstring_on_win32("system")).as_string());
+    if (obj.contains("system")) {
+        system = obj["system"];
     }
     std::string code{};
-    if (obj.has_string_field(as_wstring_on_win32("code"))) {
-        code = from_wstring_on_win32(obj.at(as_wstring_on_win32("code")).as_string());
+    if (obj.contains("code")) {
+        code = obj["code"];
     }
     std::string display{};
-    if (obj.has_string_field(as_wstring_on_win32("display"))) {
-        display = from_wstring_on_win32(obj.at(as_wstring_on_win32("display")).as_string());
+    if (obj.contains("display")) {
+        display = obj["display"];
     }
     return {std::move(system), std::move(code), std::move(display)};
 }
 
-web::json::value FhirCodeableConcept::ToJson() const {
-    auto obj = FhirExtendable::ToJson();
+FhirCoding FhirCoding::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
+json FhirCodeableConcept::ToJsonObj() const {
+    auto obj = FhirExtendable::ToJsonObj();
     FhirExtendable::ToJsonInline(obj);
-    auto jsonCoding = web::json::value::array();
-#ifdef WIN32
-    decltype(coding.size()) i = 0;
-#else
-    typeof(coding.size()) i = 0;
-#endif
+    auto jsonCoding = nlohmann::json::array();
+    bool hasCodings{false};
     for (const auto &c : coding) {
-        jsonCoding[i++] = c.ToJson();
+        jsonCoding.push_back(c.ToJsonObj());
+        hasCodings = true;
     }
-    if (i > 0 || text.empty()) {
-        obj[as_wstring_on_win32("coding")] = jsonCoding;
+    if (hasCodings || text.empty()) {
+        obj["coding"] = jsonCoding;
     }
     if (!text.empty()) {
-        obj[as_wstring_on_win32("text")] = web::json::value::string(as_wstring_on_win32(text));
+        obj["text"] = text;
     }
     return obj;
 }
 
-FhirCodeableConcept FhirCodeableConcept::Parse(const web::json::value &obj) {
+
+FhirCodeableConcept FhirCodeableConcept::Parse(const json &obj) {
     std::vector<FhirCoding> coding{};
     std::string text{};
     if (obj.is_object()) {
-        if (obj.has_array_field(as_wstring_on_win32("coding"))) {
-            for (const auto &c: obj.at(as_wstring_on_win32("coding")).as_array()) {
-                coding.emplace_back(FhirCoding::Parse(c));
+        if (obj.contains("coding")) {
+            auto codingIn = obj["coding"];
+            if (codingIn.is_array()) {
+                for (const auto &c: codingIn) {
+                    coding.emplace_back(FhirCoding::ParseObj(c));
+                }
             }
         }
-        if (obj.has_string_field(as_wstring_on_win32("text"))) {
-            text = from_wstring_on_win32(obj.at(as_wstring_on_win32("text")).as_string());
+        if (obj.contains("text") && obj["text"].is_string()) {
+            text = obj["text"];
         }
     }
     FhirCodeableConcept codeableConcept{std::move(coding), std::move(text)};
@@ -122,40 +133,44 @@ std::string FhirCodingValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirCodingValue::ToJson() const {
-    return FhirCoding::ToJson();
+json FhirCodingValue::ToJsonObj() const {
+    return FhirCoding::ToJsonObj();
 }
 
-std::shared_ptr<FhirCodingValue> FhirCodingValue::Parse(const web::json::value &obj) {
-    return std::make_shared<FhirCodingValue>(FhirCoding::Parse(obj));
+std::shared_ptr<FhirCodingValue> FhirCodingValue::Parse(const json &obj) {
+    return std::make_shared<FhirCodingValue>(FhirCoding::ParseObj(obj));
 }
 
 std::string FhirCodeableConceptValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirCodeableConceptValue::ToJson() const {
-    return FhirCodeableConcept::ToJson();
+json FhirCodeableConceptValue::ToJsonObj() const {
+    return FhirCodeableConcept::ToJsonObj();
 }
 
-std::shared_ptr<FhirCodeableConceptValue> FhirCodeableConceptValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirCodeableConceptValue> FhirCodeableConceptValue::Parse(const json &obj) {
     return std::make_shared<FhirCodeableConceptValue>(FhirCodeableConcept::Parse(obj));
 }
 
-web::json::value FhirQuantity::ToJson() const {
-    auto obj = FhirObject::ToJson();
-    obj[as_wstring_on_win32("value")] = web::json::value::number(GetValue());
-    obj[as_wstring_on_win32("unit")] = web::json::value::string(as_wstring_on_win32(unit));
+std::string FhirCodeableConceptValue::ToJson() const {
+    return ToJsonObj().dump();
+}
+
+json FhirQuantity::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
+    obj["value"] = GetValue();
+    obj["unit"] = unit;
     return obj;
 }
 
-FhirQuantity FhirQuantity::Parse(const web::json::value &obj) {
+FhirQuantity FhirQuantity::ParseObj(const json &obj) {
     std::string unit{};
-    if (obj.has_string_field(as_wstring_on_win32("unit"))) {
-        unit = from_wstring_on_win32(obj.at(as_wstring_on_win32("unit")).as_string());
+    if (obj.contains("unit")) {
+        unit = obj["unit"];
     }
-    if (obj.has_number_field(as_wstring_on_win32("value"))) {
-        return FhirQuantity(obj.at(as_wstring_on_win32("value")).as_double(), unit);
+    if (obj.contains("value")) {
+        return FhirQuantity(obj["value"], unit);
     } else if (!unit.empty()) {
         return FhirQuantity(0.0, unit);
     } else {
@@ -163,181 +178,209 @@ FhirQuantity FhirQuantity::Parse(const web::json::value &obj) {
     }
 }
 
+FhirQuantity FhirQuantity::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
 std::string FhirQuantityValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirQuantityValue::ToJson() const {
-    return FhirQuantity::ToJson();
+json FhirQuantityValue::ToJsonObj() const {
+    return FhirQuantity::ToJsonObj();
 }
 
-std::shared_ptr<FhirQuantityValue> FhirQuantityValue::Parse(const web::json::value &obj) {
-    return std::make_shared<FhirQuantityValue>(FhirQuantity::Parse(obj));
+std::shared_ptr<FhirQuantityValue> FhirQuantityValue::Parse(const json &obj) {
+    return std::make_shared<FhirQuantityValue>(FhirQuantity::ParseObj(obj));
 }
 
-web::json::value FhirRatio::ToJson() const {
-    auto obj = FhirExtendable::ToJson();
+json FhirRatio::ToJsonObj() const {
+    auto obj = FhirExtendable::ToJsonObj();
     if (numerator.IsSet()) {
-        obj[as_wstring_on_win32("numerator")] = numerator.ToJson();
+        auto num = numerator.ToJsonObj();
+        obj["numerator"] = static_cast<const nlohmann::json &>(num);
     }
     if (denominator.IsSet()) {
-        obj[as_wstring_on_win32("denominator")] = denominator.ToJson();
+        auto den = denominator.ToJsonObj();
+        obj["denominator"] = static_cast<const nlohmann::json &>(den);
     }
     FhirExtendable::ToJsonInline(obj);
     return obj;
 }
 
-FhirRatio FhirRatio::Parse(const web::json::value &obj) {
+FhirRatio FhirRatio::ParseObj(const json &obj) {
     FhirQuantity numerator{};
-    if (obj.has_object_field(as_wstring_on_win32("numerator"))) {
-        numerator = FhirQuantity::Parse(obj.at(as_wstring_on_win32("numerator")));
+    if (obj.contains("numerator")) {
+        numerator = FhirQuantity::ParseObj(obj["numerator"]);
     }
     FhirQuantity denominator{};
-    if (obj.has_object_field(as_wstring_on_win32("denominator"))) {
-        denominator = FhirQuantity::Parse(obj.at(as_wstring_on_win32("denominator")));
+    if (obj.contains("denominator")) {
+        denominator = FhirQuantity::ParseObj(obj["denominator"]);
     }
     FhirRatio ratio{std::move(numerator), std::move(denominator)};
     ratio.ParseInline(obj);
     return ratio;
 }
 
+FhirRatio FhirRatio::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
 std::string FhirReference::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirReference::ToJson() const {
-    auto obj = FhirObject::ToJson();
+json FhirReference::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
     if (identifier.IsSet()) {
-        obj[as_wstring_on_win32("identifier")] = identifier.ToJson();
+        obj["identifier"] = identifier.ToJsonObj();
     }
     if (!reference.empty()) {
-        obj[as_wstring_on_win32("reference")] = web::json::value::string(as_wstring_on_win32(reference));
+        obj["reference"] = reference;
     }
     if (!type.empty()) {
-        obj[as_wstring_on_win32("type")] = web::json::value::string(as_wstring_on_win32(type));
+        obj["type"] = type;
     }
     if (!display.empty()) {
-        obj[as_wstring_on_win32("display")] = web::json::value::string(as_wstring_on_win32(display));
+        obj["display"] = display;
     }
     return obj;
 }
 
-FhirReference FhirReference::Parse(const web::json::value &obj) {
+FhirReference FhirReference::ParseObj(const json &obj) {
     FhirIdentifier identifier{};
-    if (obj.has_object_field(as_wstring_on_win32("identifier"))) {
-        identifier = FhirIdentifier::Parse(obj.at(as_wstring_on_win32("identifier")));
+    if (obj.contains("identifier")) {
+        identifier = FhirIdentifier::ParseObj(obj["identifier"]);
     }
 
     std::string reference{};
-    if (obj.has_string_field(as_wstring_on_win32("reference"))) {
-        reference = from_wstring_on_win32(obj.at(as_wstring_on_win32("reference")).as_string());
+    if (obj.contains("reference")) {
+        reference = obj["reference"];
     }
 
     std::string type{};
-    if (obj.has_string_field(as_wstring_on_win32("type"))) {
-        type = from_wstring_on_win32(obj.at(as_wstring_on_win32("type")).as_string());
+    if (obj.contains("type")) {
+        type = obj["type"];
     }
 
     std::string display{};
-    if (obj.has_string_field(as_wstring_on_win32("display"))) {
-        display = from_wstring_on_win32(obj.at(as_wstring_on_win32("display")).as_string());
+    if (obj.contains("display")) {
+        display = obj["display"];
     }
 
     return {std::move(identifier), std::move(reference), std::move(type), std::move(display)};
 }
 
-web::json::value FhirIdentifier::ToJson() const {
-    auto obj = FhirObject::ToJson();
-    obj[as_wstring_on_win32("use")] = web::json::value::string(as_wstring_on_win32(use));
+FhirReference FhirReference::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
+json FhirIdentifier::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
+    obj["use"] = use;
     if (type.IsSet()) {
-        obj[as_wstring_on_win32("type")] = type.ToJson();
+        auto t = type.ToJsonObj();
+        obj["type"] = static_cast<const nlohmann::json &>(t);
     }
     if (!system.empty()) {
-        obj[as_wstring_on_win32("system")] = web::json::value::string(as_wstring_on_win32(system));
+        obj["system"] = system;
     }
-    obj[as_wstring_on_win32("value")] = web::json::value::string(as_wstring_on_win32(value));
+    obj["value"] = value;
     return obj;
 }
 
-FhirIdentifier FhirIdentifier::Parse(const web::json::value &obj) {
+FhirIdentifier FhirIdentifier::ParseObj(const json &obj) {
     std::string use{};
-    if (obj.has_string_field(as_wstring_on_win32("use"))) {
-        use = from_wstring_on_win32(obj.at(as_wstring_on_win32("use")).as_string());
+    if (obj.contains("use")) {
+        use = obj["use"];
     }
 
     FhirCodeableConcept type{};
-    if (obj.has_object_field(as_wstring_on_win32("type"))) {
-        type = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("type")));
+    if (obj.contains("type")) {
+        type = FhirCodeableConcept::Parse(obj["type"]);
     }
 
     std::string system{};
-    if (obj.has_string_field(as_wstring_on_win32("system"))) {
-        system = from_wstring_on_win32(obj.at(as_wstring_on_win32("system")).as_string());
+    if (obj.contains("system")) {
+        system = obj["system"];
     }
 
     std::string value{};
-    if (obj.has_string_field(as_wstring_on_win32("value"))) {
-        value = from_wstring_on_win32(obj.at(as_wstring_on_win32("value")).as_string());
+    if (obj.contains("value")) {
+        value = obj["value"];
     }
 
     return {std::move(type), std::move(use), std::move(system), std::move(value)};
 }
 
-web::json::value FhirLink::ToJson() const {
-    auto obj = FhirObject::ToJson();
+FhirIdentifier FhirIdentifier::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
+json FhirLink::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
     if (!relation.empty()) {
-        obj[as_wstring_on_win32("relation")] = web::json::value::string(as_wstring_on_win32(relation));
+        obj["relation"] = relation;
     }
     if (!url.empty()) {
-        obj[as_wstring_on_win32("url")] = web::json::value::string(as_wstring_on_win32(url));
+        obj["url"] = url;
     }
     return obj;
 }
 
-FhirLink FhirLink::Parse(const web::json::value &obj) {
+FhirLink FhirLink::ParseObj(const json &obj) {
     std::string relation{};
-    if (obj.has_string_field(as_wstring_on_win32("relation"))) {
-        relation = from_wstring_on_win32(obj.at(as_wstring_on_win32("relation")).as_string());
+    if (obj.contains("relation")) {
+        relation = obj["relation"];
     }
 
     std::string url{};
-    if (obj.has_string_field(as_wstring_on_win32("url"))) {
-        url = from_wstring_on_win32(obj.at(as_wstring_on_win32("url")).as_string());
+    if (obj.contains("url")) {
+        url = obj["url"];
     }
 
     return {std::move(relation), std::move(url)};
 }
 
-web::json::value FhirName::ToJson() const {
-    auto obj = FhirObject::ToJson();
+FhirLink FhirLink::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
+json FhirName::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
     if (!use.empty()) {
-        obj[as_wstring_on_win32("use")] = web::json::value::string(as_wstring_on_win32(use));
+        obj["use"] = use;
     }
     if (!family.empty()) {
-        obj[as_wstring_on_win32("family")] = web::json::value::string(as_wstring_on_win32(family));
+        obj["family"] = family;
     }
     if (!given.empty()) {
-        auto arr = web::json::value::array(1);
-        arr[0] = web::json::value::string(as_wstring_on_win32(given));
-        obj[as_wstring_on_win32("given")] = arr;
+        auto arr = nlohmann::json::array();
+        arr.push_back(given);
+        obj["given"] = arr;
     }
     return obj;
 }
 
-FhirName FhirName::Parse(const web::json::value &obj) {
+FhirName FhirName::ParseObj(const json &obj) {
     FhirName name{};
 
-    if (obj.has_string_field(as_wstring_on_win32("use"))) {
-        name.use = from_wstring_on_win32(obj.at(as_wstring_on_win32("use")).as_string());
+    if (obj.contains("use")) {
+        name.use = obj["use"];
     }
-    if (obj.has_string_field(as_wstring_on_win32("family"))) {
-        name.family = from_wstring_on_win32(obj.at(as_wstring_on_win32("family")).as_string());
+    if (obj.contains("family")) {
+        name.family = obj["family"];
     }
-    if (obj.has_array_field(as_wstring_on_win32("given"))) {
-        name.given = from_wstring_on_win32(obj.at(as_wstring_on_win32("given")).as_array().at(0).as_string());
+    if (obj.contains("given")) {
+        auto arr = obj["given"];
+        name.given = arr.is_array() && arr.size() > 0 ? arr[0] : "";
     }
 
     return name;
+}
+
+FhirName FhirName::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }
 
 std::string FhirName::GetDisplay() const {
@@ -349,61 +392,60 @@ std::string FhirName::GetDisplay() const {
     return display;
 }
 
-web::json::value FhirAddress::ToJson() const {
-    auto obj = FhirObject::ToJson();
+json FhirAddress::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
     if (!type.empty()) {
-        obj[as_wstring_on_win32("type")] = web::json::value::string(as_wstring_on_win32(type));
+        obj["type"] = type;
     }
     if (!city.empty()) {
-        obj[as_wstring_on_win32("city")] = web::json::value::string(as_wstring_on_win32(city));
+        obj["city"] = city;
     }
     if (!postalCode.empty()) {
-        obj[as_wstring_on_win32("postalCode")] = web::json::value::string(as_wstring_on_win32(postalCode));
+        obj["postalCode"] = postalCode;
     }
     if (!lines.empty()) {
-        auto arr = web::json::value::array(lines.size());
-#if WIN32
+        auto arr = nlohmann::json::array();
         decltype(lines.size()) i = 0;
-#else
-        typeof(lines.size()) i = 0;
-#endif
         for (const auto &line : lines) {
-            arr[i++] = web::json::value::string(as_wstring_on_win32(line));
+            arr.push_back(line);
         }
-        obj[as_wstring_on_win32("line")] = arr;
+        obj["line"] = arr;
     }
     if (!use.empty()) {
-        obj[as_wstring_on_win32("use")] = web::json::value::string(as_wstring_on_win32(use));
+        obj["use"] = use;
     }
     return obj;
 }
 
-FhirAddress FhirAddress::Parse(const web::json::value &obj) {
+FhirAddress FhirAddress::Parse(const json &obj) {
     std::string type{};
-    if (obj.has_string_field(as_wstring_on_win32("type"))) {
-        type = from_wstring_on_win32(obj.at(as_wstring_on_win32("type")).as_string());
+    if (obj.contains("type")) {
+        type = obj["type"];
     }
 
     std::string city{};
-    if (obj.has_string_field(as_wstring_on_win32("city"))) {
-        city = from_wstring_on_win32(obj.at(as_wstring_on_win32("city")).as_string());
+    if (obj.contains("city")) {
+        city = obj["city"];
     }
 
     std::string postalCode{};
-    if (obj.has_string_field(as_wstring_on_win32("postalCode"))) {
-        postalCode = from_wstring_on_win32(obj.at(as_wstring_on_win32("postalCode")).as_string());
+    if (obj.contains("postalCode")) {
+        postalCode = obj["postalCode"];
     }
 
     std::vector<std::string> lines{};
-    if (obj.has_array_field(as_wstring_on_win32("line"))) {
-        for (const auto &line : obj.at(as_wstring_on_win32("line")).as_array()) {
-            lines.emplace_back(from_wstring_on_win32(line.as_string()));
+    if (obj.contains("line")) {
+        auto lineArr = obj["line"];
+        if (lineArr.is_array()) {
+            for (const auto &line: lineArr) {
+                lines.emplace_back(line);
+            }
         }
     }
 
     std::string use{};
-    if (obj.has_string_field(as_wstring_on_win32("use"))) {
-        use = from_wstring_on_win32(obj.at(as_wstring_on_win32("use")).as_string());
+    if (obj.contains("use")) {
+        use = obj["use"];
     }
 
     return {std::move(lines), std::move(use), std::move(type), std::move(city), std::move(postalCode)};
@@ -417,13 +459,15 @@ std::string FhirDateTimeValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirDateTimeValue::ToJson() const {
-    return web::json::value::string(as_wstring_on_win32(dateTime));
+json FhirDateTimeValue::ToJsonObj() const {
+    json v{};
+    v = dateTime;
+    return v;
 }
 
-std::shared_ptr<FhirDateTimeValue> FhirDateTimeValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirDateTimeValue> FhirDateTimeValue::Parse(const json &obj) {
     auto dateTimeValue = std::make_shared<FhirDateTimeValue>();
-    dateTimeValue->dateTime = from_wstring_on_win32(obj.as_string());
+    dateTimeValue->dateTime = obj;
     return dateTimeValue;
 }
 
@@ -435,13 +479,15 @@ std::string FhirBooleanValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirBooleanValue::ToJson() const {
-    return web::json::value::boolean(value);
+json FhirBooleanValue::ToJsonObj() const {
+    json v{};
+    v = value;
+    return v;
 }
 
-std::shared_ptr<FhirBooleanValue> FhirBooleanValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirBooleanValue> FhirBooleanValue::Parse(const json &obj) {
     auto value = std::make_shared<FhirBooleanValue>();
-    value->value = obj.as_bool();
+    value->value = obj;
     return value;
 }
 
@@ -453,17 +499,15 @@ std::string FhirIntegerValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirIntegerValue::ToJson() const {
-    return web::json::value::number(value);
+json FhirIntegerValue::ToJsonObj() const {
+    json v{};
+    v = value;
+    return v;
 }
 
-std::shared_ptr<FhirIntegerValue> FhirIntegerValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirIntegerValue> FhirIntegerValue::Parse(const json &obj) {
     auto integerValue = std::make_shared<FhirIntegerValue>();
-    if constexpr (sizeof(long) == 4) {
-        integerValue->value = obj.as_number().to_int32();
-    } else {
-        integerValue->value = obj.as_number().to_int64();
-    }
+    integerValue->value = obj;
     return integerValue;
 }
 
@@ -553,13 +597,16 @@ std::string FhirDecimalValue::GetPropertyName() const {
     return PropertyName();
 }
 
-web::json::value FhirDecimalValue::ToJson() const {
-    return web::json::value::number(GetValue());
+json FhirDecimalValue::ToJsonObj() const {
+    json v{};
+    v = GetValue();
+    return v;
 }
 
-std::shared_ptr<FhirDecimalValue> FhirDecimalValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirDecimalValue> FhirDecimalValue::Parse(const json &obj) {
     if (obj.is_number()) {
-        return std::make_shared<FhirDecimalValue>(obj.as_number().to_double());
+        double num = obj;
+        return std::make_shared<FhirDecimalValue>(num);
     } else {
         return {};
     }
@@ -581,13 +628,16 @@ void FhirDateValue::SetValue(const std::string &value) {
     date = value;
 }
 
-web::json::value FhirDateValue::ToJson() const {
-    return web::json::value::string(as_wstring_on_win32(date));
+json FhirDateValue::ToJsonObj() const {
+    json v{};
+    v = date;
+    return v;
 }
 
-std::shared_ptr<FhirDateValue> FhirDateValue::Parse(const web::json::value &obj) {
+std::shared_ptr<FhirDateValue> FhirDateValue::Parse(const json &obj) {
     if (obj.is_string()) {
-        return std::make_shared<FhirDateValue>(from_wstring_on_win32(obj.as_string()));
+        std::string str = obj;
+        return std::make_shared<FhirDateValue>(str);
     } else {
         return {};
     }

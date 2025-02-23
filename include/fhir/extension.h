@@ -8,6 +8,7 @@
 #include "fhirextendable.h"
 
 class FhirExtension : public FhirExtendable {
+    friend FhirExtendable;
 private:
     std::string url;
 public:
@@ -15,9 +16,13 @@ public:
     explicit FhirExtension(const std::string &url) : url(url) {}
     explicit FhirExtension(std::string &&url) : url(std::move(url)) {}
     virtual ~FhirExtension() = default;
-    void ToJsonInline(web::json::value &json) const override;
-    virtual web::json::value ToJson() const override;
-    static std::shared_ptr<FhirExtension> Parse(const web::json::value &);
+protected:
+    void ToJsonInline(json &json) const override;
+    [[nodiscard]] virtual json ToJsonObj() const override;
+    static std::shared_ptr<FhirExtension> ParseObj(const json &);
+public:
+    static std::shared_ptr<FhirExtension> ParseJson(const std::string &);
+    [[nodiscard]] std::string ToJson() const override;
     [[nodiscard]] std::string GetUrl() const {
         return url;
     }

@@ -4,31 +4,37 @@
 
 #include <fhir/extension.h>
 #include <fhir/fhir.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-void FhirExtension::ToJsonInline(web::json::value &json) const {
+void FhirExtension::ToJsonInline(json &json) const {
     FhirExtendable::ToJsonInline(json);
     if (!url.empty()) {
-        json[as_wstring_on_win32("url")] = web::json::value::string(as_wstring_on_win32(url));
+        json["url"] = url;
     }
 }
 
-web::json::value FhirExtension::ToJson() const {
+json FhirExtension::ToJsonObj() const {
+    return FhirExtendable::ToJsonObj();
+}
+
+std::string FhirExtension::ToJson() const {
     return FhirExtendable::ToJson();
 }
 
-std::shared_ptr<FhirExtension> FhirExtension::Parse(const web::json::value &obj) {
-    web::json::value genericJson = web::json::value::parse(obj.serialize());
+std::shared_ptr<FhirExtension> FhirExtension::ParseObj(const json &obj) {
+    auto genericJson = nlohmann::json::parse(obj.dump());
     std::string url{};
-    if (obj.has_string_field(as_wstring_on_win32("url"))) {
-        url = from_wstring_on_win32(obj.at(as_wstring_on_win32("url")).as_string());
+    if (obj.contains("url")) {
+        url = obj["url"];
         bool generic{false};
         std::string valueProperty{};
-        web::json::value value{};
-        for (const auto &child : obj.as_object()) {
-            auto first = from_wstring_on_win32(child.first);
+        nlohmann::json value{};
+        for (const auto &child : obj.items()) {
+            auto first = child.key();
             if (first == "url") {
+                continue;
+            }
+            if (first == "extension") {
                 continue;
             }
             if (!valueProperty.empty() || !first.starts_with("value")) {
@@ -36,17 +42,21 @@ std::shared_ptr<FhirExtension> FhirExtension::Parse(const web::json::value &obj)
                 break;
             }
             valueProperty = first;
-            value = child.second;
+            value = child.value();
         }
         if (!generic && !valueProperty.empty()) {
-            return std::make_shared<FhirValueExtension>(url, FhirValue::Parse(valueProperty, value));
+            return std::make_shared<FhirValueExtension>(url, FhirValue::ParseObj(valueProperty, value));
         }
-        genericJson.erase(as_wstring_on_win32("url"));
+        genericJson.erase("url");
     }
-    if (genericJson.has_field(as_wstring_on_win32("extension"))) {
-        genericJson.erase(as_wstring_on_win32("extension"));
+    if (genericJson.contains("extension")) {
+        genericJson.erase("extension");
     }
-    auto ext = std::make_shared<FhirGenericExtension>(url, genericJson);
+    auto ext = std::make_shared<FhirGenericExtension>(url, obj.dump());
     ext->ParseInline(obj);
     return ext;
+}
+
+std::shared_ptr<FhirExtension> FhirExtension::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }

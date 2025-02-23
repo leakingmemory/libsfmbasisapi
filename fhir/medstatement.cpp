@@ -3,50 +3,41 @@
 //
 
 #include <fhir/medstatement.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirMedicationStatement::ToJson() const {
-    auto obj = Fhir::ToJson();
-    obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("MedicationStatement"));
+json FhirMedicationStatement::ToJsonObj() const {
+    auto obj = Fhir::ToJsonObj();
+    obj["resourceType"] = "MedicationStatement";
     if (medicationReference.IsSet()) {
-        obj[as_wstring_on_win32("medicationReference")] = medicationReference.ToJson();
+        obj["medicationReference"] = medicationReference.ToJsonObj();
     }
     if (subject.IsSet()) {
-        obj[as_wstring_on_win32("subject")] = subject.ToJson();
+        obj["subject"] = subject.ToJsonObj();
     }
     if (!identifiers.empty()) {
-        auto arr = web::json::value::array(identifiers.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(identifiers.size()) i = 0;
-#else
-        typeof(identifiers.size()) i = 0;
-#endif
         for (const auto &id : identifiers) {
-            arr[i++] = id.ToJson();
+            arr.push_back(id.ToJsonObj());
         }
-        obj[as_wstring_on_win32("identifier")] = arr;
+        obj["identifier"] = arr;
     }
     if (!dosage.empty()) {
-        auto arr = web::json::value::array(dosage.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(dosage.size()) i = 0;
-#else
-        typeof(dosage.size()) i = 0;
-#endif
         for (const auto &d : dosage) {
-            arr[i++] = d.ToJson();
+            arr.push_back(d.ToJsonObj());
         }
-        obj[as_wstring_on_win32("dosage")] = arr;
+        obj["dosage"] = arr;
     }
     if (!effectiveDateTime.empty()) {
-        obj[as_wstring_on_win32("effectiveDateTime")] = web::json::value::string(as_wstring_on_win32(effectiveDateTime));
+        obj["effectiveDateTime"] = effectiveDateTime;
     }
     FhirPartOfChain::ToJsonInline(obj);
     return obj;
 }
 
-FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &obj) {
+FhirMedicationStatement FhirMedicationStatement::ParseObj(const json &obj) {
     FhirMedicationStatement medStatement{};
 
     if (!medStatement.Fhir::ParseInline(obj)) {
@@ -55,29 +46,33 @@ FhirMedicationStatement FhirMedicationStatement::Parse(const web::json::value &o
 
     medStatement.FhirPartOfChain::ParseInline(obj);
 
-    if (obj.has_object_field(as_wstring_on_win32("medicationReference"))) {
-        medStatement.medicationReference = FhirReference::Parse(obj.at(as_wstring_on_win32("medicationReference")));
+    if (obj.contains("medicationReference")) {
+        medStatement.medicationReference = FhirReference::ParseObj(obj["medicationReference"]);
     }
-    if (obj.has_field(as_wstring_on_win32("subject"))) {
-        medStatement.subject = FhirReference::Parse(obj.at(as_wstring_on_win32("subject")));
+    if (obj.contains("subject")) {
+        medStatement.subject = FhirReference::ParseObj(obj["subject"]);
     }
-    if (obj.has_field(as_wstring_on_win32("identifier"))) {
-        const auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
+    if (obj.contains("identifier")) {
+        const auto arr = obj["identifier"];
         for (const auto &id : arr) {
-            medStatement.identifiers.push_back(FhirIdentifier::Parse(id));
+            medStatement.identifiers.push_back(FhirIdentifier::ParseObj(id));
         }
     }
-    if (obj.has_field(as_wstring_on_win32("dosage"))) {
-        auto arr = obj.at(as_wstring_on_win32("dosage")).as_array();
+    if (obj.contains("dosage")) {
+        auto arr = obj["dosage"];
         for (const auto &d : arr) {
-            medStatement.dosage.push_back(FhirDosage::Parse(d));
+            medStatement.dosage.push_back(FhirDosage::ParseObj(d));
         }
     }
-    if (obj.has_string_field(as_wstring_on_win32("effectiveDateTime"))) {
-        medStatement.effectiveDateTime = from_wstring_on_win32(obj.at(as_wstring_on_win32("effectiveDateTime")).as_string());
+    if (obj.contains("effectiveDateTime")) {
+        medStatement.effectiveDateTime = obj["effectiveDateTime"];
     }
 
     return medStatement;
+}
+
+FhirMedicationStatement FhirMedicationStatement::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }
 
 std::string FhirMedicationStatement::GetDisplay() const {

@@ -8,13 +8,15 @@
 #include "value.h"
 
 class FhirIngredient : public FhirExtendable {
+    friend FhirMedication;
 private:
     FhirReference itemReference{};
     FhirRatio strength{};
     bool isActive{false};
+protected:
+    static FhirIngredient Parse(const json &);
+    json ToJsonObj() const;
 public:
-    static FhirIngredient Parse(const web::json::value &);
-    web::json::value ToJson() const;
     [[nodiscard]] FhirReference GetItemReference() const {
         return itemReference;
     }
@@ -39,6 +41,8 @@ public:
 };
 
 class FhirMedication : public Fhir {
+    friend Fhir;
+private:
     std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
     FhirCodeableConcept form{};
@@ -46,9 +50,11 @@ class FhirMedication : public Fhir {
     std::vector<FhirIngredient> ingredients{};
     std::string name{};
     bool hasIngredients{false};
+protected:
+    static FhirMedication ParseObj(const json &);
+    json ToJsonObj() const override;
 public:
-    static FhirMedication Parse(const web::json::value &);
-    web::json::value ToJson() const;
+    static FhirMedication ParseJson(const std::string &);
     [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const {
         return identifiers;
     }

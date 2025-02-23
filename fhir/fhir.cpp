@@ -3,63 +3,77 @@
 //
 
 #include <fhir/fhir.h>
-#include "../win32/w32strings.h"
+#include "json.h"
 
-web::json::value FhirValueExtension::ToJson() const {
-    auto obj = FhirExtension::ToJson();
+json FhirValueExtension::ToJsonObj() const {
+    auto obj = FhirExtension::ToJsonObj();
     if (value) {
-        obj[as_wstring_on_win32(value->GetPropertyName())] = value->ToJson();
+        auto sub = value->ToJsonObj();
+        obj[value->GetPropertyName()] = static_cast<const nlohmann::json &>(sub);
     }
     return obj;
 }
 
-FhirGenericExtension::FhirGenericExtension(const std::string &url, const web::json::value &json) : FhirExtension(url), json(json) {
-    if (json.has_string_field(as_wstring_on_win32("url"))) {
-        SetUrl(from_wstring_on_win32(json.at(as_wstring_on_win32("url")).as_string()));
+std::string FhirValueExtension::ToJson() const {
+    return ToJsonObj().dump();
+}
+
+FhirGenericExtension::FhirGenericExtension(const std::string &url, const std::string &json) : FhirExtension(url), json(json) {
+    auto obj = json::parse(json);
+    if (obj.contains("url")) {
+        SetUrl(obj["url"]);
     }
 }
 
-web::json::value FhirGenericExtension::ToJson() const {
-    web::json::value v = web::json::value::parse(json.serialize());
+json FhirGenericExtension::ToJsonObj() const {
+    struct json v{json::parse(json)};
     FhirExtension::ToJsonInline(v);
     return v;
 }
 
+std::string FhirGenericExtension::ToJson() const {
+    return ToJsonObj().dump();
+}
 
-bool Fhir::ParseInline(const web::json::value &json) {
+
+bool Fhir::ParseInline(const json &json) {
     if (!FhirExtendable::ParseInline(json)) {
         return false;
     }
-    if (json.has_string_field(as_wstring_on_win32("resourceType"))) {
-        resourceType = from_wstring_on_win32(json.at(as_wstring_on_win32("resourceType")).as_string());
+    if (json.contains("resourceType")) {
+        resourceType = json["resourceType"];
     }
-    if (json.has_string_field(as_wstring_on_win32("id"))) {
-        id = from_wstring_on_win32(json.at(as_wstring_on_win32("id")).as_string());
+    if (json.contains("id")) {
+        id = json["id"];
     }
-    if (json.has_object_field(as_wstring_on_win32("meta"))) {
-        auto meta = json.at(as_wstring_on_win32("meta"));
-        if (meta.has_string_field(as_wstring_on_win32("lastUpdated"))) {
-            lastUpdated = from_wstring_on_win32(meta.at(as_wstring_on_win32("lastUpdated")).as_string());
+    if (json.contains("meta")) {
+        auto meta = json["meta"];
+        if (meta.contains("lastUpdated")) {
+            lastUpdated = meta["lastUpdated"];
         }
-        if (meta.has_string_field(as_wstring_on_win32("source"))) {
-            source = from_wstring_on_win32(meta.at(as_wstring_on_win32("source")).as_string());
+        if (meta.contains("source")) {
+            source = meta["source"];
         }
-        if (meta.has_array_field(as_wstring_on_win32("profile"))) {
-            for (const auto &p : meta.at(as_wstring_on_win32("profile")).as_array()) {
-                if (p.is_string()) {
-                    profile.emplace_back(from_wstring_on_win32(p.as_string()));
+        if (meta.contains("profile")) {
+            auto profileArr = meta["profile"];
+            if (profileArr.is_array()) {
+                for (const auto &p: profileArr) {
+                    if (p.is_string()) {
+                        std::string str = p;
+                        profile.emplace_back(str);
+                    }
                 }
             }
         }
     }
-    if (json.has_string_field(as_wstring_on_win32("timestamp"))) {
-        timestamp = from_wstring_on_win32(json.at(as_wstring_on_win32("timestamp")).as_string());
+    if (json.contains("timestamp")) {
+        timestamp = json["timestamp"];
     }
-    if (json.has_string_field(as_wstring_on_win32("date"))) {
-        date = from_wstring_on_win32(json.at(as_wstring_on_win32("date")).as_string());
+    if (json.contains("date")) {
+        date = json["date"];
     }
-    if (json.has_string_field(as_wstring_on_win32("status"))) {
-        auto s = from_wstring_on_win32(json.at(as_wstring_on_win32("status")).as_string());
+    if (json.contains("status")) {
+        std::string s = json["status"];
         if (s == "active") {
             status = FhirStatus::ACTIVE;
         } else if (s == "final") {
@@ -75,59 +89,59 @@ bool Fhir::ParseInline(const web::json::value &json) {
     return true;
 }
 
-web::json::value Fhir::ToJson() const {
-    auto obj = FhirExtendable::ToJson();
+json Fhir::ToJsonObj() const {
+    auto obj = FhirExtendable::ToJsonObj();
     if (!resourceType.empty()) {
-        obj[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32(resourceType));
+        obj["resourceType"] = resourceType;
     }
     if (!id.empty()) {
-        obj[as_wstring_on_win32("id")] = web::json::value::string(as_wstring_on_win32(id));
+        obj["id"] = id;
     }
     if (!profile.empty()) {
-        auto meta = web::json::value::object();
+        auto meta = nlohmann::json::object();
         {
             if (!lastUpdated.empty()) {
-                meta[as_wstring_on_win32("lastUpdated")] = web::json::value::string(as_wstring_on_win32(lastUpdated));
+                meta["lastUpdated"] = lastUpdated;
             }
             if (!source.empty()) {
-                meta[as_wstring_on_win32("source")] = web::json::value::string(as_wstring_on_win32(source));
+                meta["source"] = source;
             }
-            auto arr = web::json::value::array(profile.size());
-#ifdef WIN32
+            auto arr = nlohmann::json::array();
             decltype(profile.size()) i = 0;
-#else
-            typeof(profile.size()) i = 0;
-#endif
             for (const auto &p: profile) {
-                arr[i++] = web::json::value::string(as_wstring_on_win32(p));
+                arr.push_back(p);
             }
-            meta[as_wstring_on_win32("profile")] = arr;
+            meta["profile"] = arr;
         }
-        obj[as_wstring_on_win32("meta")] = meta;
+        obj["meta"] = meta;
     }
     if (!timestamp.empty()) {
-        obj[as_wstring_on_win32("timestamp")] = web::json::value::string(as_wstring_on_win32(timestamp));
+        obj["timestamp"] = timestamp;
     }
     if (!date.empty()) {
-        obj[as_wstring_on_win32("date")] = web::json::value::string(as_wstring_on_win32(date));
+        obj["date"] = date;
     }
     switch (status) {
         case FhirStatus::NOT_SET:
             break;
         case FhirStatus::ACTIVE:
-            obj[as_wstring_on_win32("status")] = web::json::value::string(as_wstring_on_win32("active"));
+            obj["status"] = "active";
             break;
         case FhirStatus::FINAL:
-            obj[as_wstring_on_win32("status")] = web::json::value::string(as_wstring_on_win32("final"));
+            obj["status"] = "final";
             break;
         case FhirStatus::COMPLETED:
-            obj[as_wstring_on_win32("status")] = web::json::value::string(as_wstring_on_win32("completed"));
+            obj["status"] = "completed";
             break;
         case FhirStatus::STOPPED:
-            obj[as_wstring_on_win32("status")] = web::json::value::string(as_wstring_on_win32("stopped"));
+            obj["status"] = "stopped";
             break;
     }
     return obj;
+}
+
+std::string Fhir::ToJson() const {
+    return ToJsonObj().dump();
 }
 
 std::string Fhir::GetDisplay() const {

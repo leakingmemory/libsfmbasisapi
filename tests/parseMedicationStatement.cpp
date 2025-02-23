@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
         json = sstr.str();
         input.close();
     }
-    auto medicationStatement = FhirMedicationStatement::Parse(FhirMedicationStatement::Parse(web::json::value::parse(json)).ToJson());
+    auto medicationStatement = FhirMedicationStatement::ParseJson(FhirMedicationStatement::ParseJson(json).ToJson());
     AreEqual("urn:uuid:f874c81b-b1ce-4da3-966f-652fe569c5dd", medicationStatement.GetMedicationReference().GetReference());
     AreEqual("urn:uuid:a325b9dc-2aa2-421f-ab93-5bdf99481981", medicationStatement.GetSubject().GetReference());
     AreEqual(1, medicationStatement.GetDosage().size());

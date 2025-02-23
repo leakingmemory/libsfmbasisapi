@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         json = sstr.str();
         input.close();
     }
-    auto bundle = FhirBundle::Parse(FhirBundle::Parse(web::json::value::parse(json)).ToJson());
+    auto bundle = FhirBundle::ParseJson(FhirBundle::ParseJson(json).ToJson());
     AreEqual(8, bundle.GetTotal());
     std::shared_ptr<FhirPerson> practitioner{};
     std::shared_ptr<FhirPerson> patient{};

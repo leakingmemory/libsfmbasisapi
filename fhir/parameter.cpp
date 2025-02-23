@@ -4,41 +4,40 @@
 
 #include <fhir/parameter.h>
 #include <fhir/fhir.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-web::json::value FhirParameter::ToJson() const {
-    auto obj = FhirObject::ToJson();
-    obj[as_wstring_on_win32("name")] = web::json::value::string(as_wstring_on_win32(name));
+json FhirParameter::ToJsonObj() const {
+    auto obj = FhirObject::ToJsonObj();
+    obj["name"] = name;
     if (resource) {
-        obj[as_wstring_on_win32("resource")] = resource->ToJson();
+        obj["resource"] = resource->ToJsonObj();
     }
     if (value) {
-        obj[as_wstring_on_win32(value->GetPropertyName())] = value->ToJson();
+        obj[value->GetPropertyName()] = value->ToJsonObj();
     }
     if (!part.empty()) {
-        auto arr = web::json::value::array();
+        auto arr = nlohmann::json::array();
         int i = 0;
         for (const auto &p : part) {
-            arr[i++] = p->ToJson();
+            arr.push_back(p->ToJsonObj());
         }
-        obj[as_wstring_on_win32("part")] = arr;
+        obj["part"] = arr;
     }
     return obj;
 }
 
-FhirParameter FhirParameter::Parse(const web::json::value &obj) {
+FhirParameter FhirParameter::Parse(const json &obj) {
     FhirParameter parameter{};
-    for (const auto &prop : obj.as_object()) {
-        auto key = from_wstring_on_win32(prop.first);
+    for (const auto &prop : obj.items()) {
+        auto key = prop.key();
         if (key == "name") {
-            parameter.name = from_wstring_on_win32(prop.second.as_string());
+            parameter.name = prop.value();
         } else if (key == "resource") {
-            parameter.resource = Fhir::Parse(prop.second);
+            parameter.resource = Fhir::ParseObj(prop.value());
         } else if (key.starts_with("value")) {
-            parameter.value = FhirValue::Parse(key, prop.second);
+            parameter.value = FhirValue::ParseObj(key, prop.value());
         } else if (key == "part") {
-            for (const auto &part : prop.second.as_array()) {
+            for (const auto &part : prop.value()) {
                 std::shared_ptr<FhirParameter> p = std::make_shared<FhirParameter>(FhirParameter::Parse(part));
                 parameter.part.emplace_back(p);
             }

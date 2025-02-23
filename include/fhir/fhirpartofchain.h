@@ -13,8 +13,8 @@ private:
     std::vector<FhirReference> partOf{};
     std::vector<FhirReference> basedOn{};
 protected:
-    void ToJsonInline(web::json::value &json) const;
-    void ParseInline(const web::json::value &json);
+    void ToJsonInline(json &json) const;
+    void ParseInline(const json &json);
 public:
     [[nodiscard]] std::vector<FhirReference> GetPartOf() const {
         return partOf;

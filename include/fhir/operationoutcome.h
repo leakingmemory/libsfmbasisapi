@@ -68,12 +68,16 @@ public:
 };
 
 class FhirOperationOutcome : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirIssue> issue{};
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirOperationOutcome() = default;
-    [[nodiscard]] web::json::value ToJson() const override;
-    static FhirOperationOutcome Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirOperationOutcome ParseObj(const json &obj);
+public:
+    static FhirOperationOutcome ParseJson(const std::string &);
     ~FhirOperationOutcome() override = default;
     [[nodiscard]] std::vector<FhirIssue> GetIssue() const {
         return issue;

@@ -10,6 +10,7 @@
 #include "fhirpartofchain.h"
 
 class FhirBasic : public Fhir, public FhirPartOfChain {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifiers{};
     FhirCodeableConcept code{};
@@ -17,10 +18,10 @@ private:
     FhirReference author{};
 public:
     FhirBasic() : Fhir("Basic") {}
-
-    web::json::value ToJson() const;
-    static FhirBasic Parse(const web::json::value &obj);
-
+protected:
+    json ToJsonObj() const override;
+    static FhirBasic Parse(const json &obj);
+public:
     [[nodiscard]] std::vector<FhirIdentifier> GetIdentifiers() const { return identifiers; }
     [[nodiscard]] FhirCodeableConcept GetCode() const { return code; }
     [[nodiscard]] FhirReference GetSubject() const { return subject; }

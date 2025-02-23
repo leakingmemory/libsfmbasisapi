@@ -9,12 +9,13 @@
 #include "dosage.h"
 
 class FhirReaction : public FhirObject {
+    friend FhirAllergyIntolerance;
 private:
     std::vector<FhirCodeableConcept> manifestation{};
+protected:
+    json ToJsonObj() const override;
+    static FhirReaction Parse(const json &obj);
 public:
-    web::json::value ToJson() const;
-    static FhirReaction Parse(const web::json::value &obj);
-
     std::vector<FhirCodeableConcept> GetManifestations() const {
         return manifestation;
     }
@@ -25,6 +26,7 @@ public:
 };
 
 class FhirAllergyIntolerance : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifier{};
     std::vector<FhirReaction> reaction{};
@@ -38,9 +40,10 @@ private:
     std::string recordedDate{};
 public:
     FhirAllergyIntolerance() : Fhir("AllergyIntolerance") {}
-    web::json::value ToJson() const;
-    static FhirAllergyIntolerance Parse(const web::json::value &obj);
-
+protected:
+    json ToJsonObj() const;
+    static FhirAllergyIntolerance Parse(const json &obj);
+public:
     std::vector<FhirIdentifier> GetIdentifiers() const {
         return identifier;
     }

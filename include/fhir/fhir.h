@@ -37,10 +37,15 @@ enum class FhirStatus {
 };
 
 class FhirValue : public FhirObject {
+    friend FhirExtension;
+    friend FhirParameter;
 public:
     constexpr FhirValue() {}
     virtual std::string GetPropertyName() const = 0;
-    static std::shared_ptr<FhirValue> Parse(const std::string &propertyName, const web::json::value &property);
+protected:
+    static std::shared_ptr<FhirValue> ParseObj(const std::string &propertyName, const json &property);
+public:
+    static std::shared_ptr<FhirValue> ParseJson(const std::string &propertyName, const std::string &property);
 };
 
 class FhirValueExtension : public FhirExtension {
@@ -59,19 +64,30 @@ public:
     void SetValue(std::shared_ptr<FhirValue> &&v) {
         value = std::move(v);
     }
-    [[nodiscard]] web::json::value ToJson() const override;
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+public:
+    [[nodiscard]] std::string ToJson() const override;
 };
 
 class FhirGenericExtension : public FhirExtension {
 private:
-    web::json::value json;
+    std::string json;
 public:
     FhirGenericExtension() : json() {}
-    FhirGenericExtension(const std::string &url, const web::json::value &json);
-    web::json::value ToJson() const override;
+    FhirGenericExtension(const std::string &url, const std::string &json);
+protected:
+    struct json ToJsonObj() const override;
+public:
+    std::string ToJson() const override;
 };
 
+class FhirBundleEntry;
+class FhirParameter;
+
 class Fhir : public FhirExtendable {
+    friend FhirBundleEntry;
+    friend FhirParameter;
 private:
     std::string resourceType;
     std::string id{};
@@ -82,13 +98,17 @@ private:
     std::string date{};
     FhirStatus status{FhirStatus::NOT_SET};
 protected:
-    bool ParseInline(const web::json::value &json);
+    bool ParseInline(const json &json);
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING Fhir() : resourceType() {}
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit Fhir(const std::string &resourceType) : resourceType(resourceType) {}
     LIBSFMBASISAPI_CONSTEXPR_STRING explicit Fhir(std::string &&resourceType) : resourceType(std::move(resourceType)) {}
-    web::json::value ToJson() const;
-    static std::shared_ptr<Fhir> Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const override;
+    static std::shared_ptr<Fhir> ParseObj(const json &obj);
+public:
+    static std::shared_ptr<Fhir> ParseJson(const std::string &);
+    std::string ToJson() const override;
     virtual std::string GetDisplay() const;
     virtual ~Fhir() = default;
     [[nodiscard]] std::string GetResourceType() const {

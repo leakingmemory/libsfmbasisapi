@@ -7,6 +7,7 @@
 
 #include "fhirobject.h"
 #include "fhirconcepts.h"
+#include <vector>
 
 class FhirExtension;
 
@@ -14,12 +15,13 @@ class FhirExtendable : public FhirObject {
 private:
     std::vector<std::shared_ptr<FhirExtension>> extensions{};
 protected:
-    bool ParseInline(const web::json::value &json);
+    bool ParseInline(const json &json);
+    void ToJsonInline(json &json) const override;
+    [[nodiscard]] json ToJsonObj() const override;
 public:
     LIBSFMBASISAPI_CONSTEXPR_STRING FhirExtendable() {}
-    void ToJsonInline(web::json::value &json) const override;
-    web::json::value ToJson() const;
     virtual ~FhirExtendable() = default;
+    [[nodiscard]] std::string ToJson() const override;
     [[nodiscard]] std::vector<std::shared_ptr<FhirExtension>> GetExtensions() const {
         return extensions;
     }

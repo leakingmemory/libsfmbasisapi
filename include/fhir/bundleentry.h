@@ -7,11 +7,14 @@
 
 #include "fhirobject.h"
 #include "fhirconcepts.h"
+#include <memory>
 
 class Fhir;
 class FhirReference;
+class FhirBundle;
 
 class FhirBundleEntry : public FhirObject {
+    friend FhirBundle;
 private:
     std::string fullUrl;
     std::shared_ptr<Fhir> resource;
@@ -39,8 +42,10 @@ public:
     void SetResource(const std::shared_ptr<Fhir> &res) {
         resource = res;
     }
-    web::json::value ToJson() const;
-    static FhirBundleEntry Parse(const web::json::value &obj);
+protected:
+    json ToJsonObj() const;
+    static FhirBundleEntry Parse(const json &obj);
+public:
     FhirReference CreateReference(const std::string &type) const;
 };
 

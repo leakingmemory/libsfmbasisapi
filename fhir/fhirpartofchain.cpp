@@ -3,44 +3,45 @@
 //
 
 #include <fhir/fhirpartofchain.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-void FhirPartOfChain::ToJsonInline(web::json::value &json) const {
+void FhirPartOfChain::ToJsonInline(json &json) const {
     if (!partOf.empty()) {
-        auto arr = web::json::value::array(partOf.size());
-        auto i = 0;
+        auto arr = nlohmann::json::array();
         for (const auto &part: partOf) {
-            arr[i++] = part.ToJson();
+            arr.push_back(part.ToJsonObj());
         }
-        json[as_wstring_on_win32("partOf")] = arr;
+        json["partOf"] = arr;
     }
     if (!basedOn.empty()) {
-        auto arr = web::json::value::array(basedOn.size());
-        auto i = 0;
+        auto arr = nlohmann::json::array();
         for (const auto &part: basedOn) {
-            arr[i++] = part.ToJson();
+            arr.push_back(part.ToJsonObj());
         }
-        json[as_wstring_on_win32("basedOn")] = arr;
+        json["basedOn"] = arr;
     }
 }
 
-void FhirPartOfChain::ParseInline(const web::json::value &json) {
-    if (json.has_array_field(as_wstring_on_win32("partOf"))) {
-        auto arr = json.at(as_wstring_on_win32("partOf")).as_array();
-        for (const auto &item : arr) {
-            if (item.is_object()) {
-                auto ref = FhirReference::Parse(item);
-                partOf.emplace_back(ref);
+void FhirPartOfChain::ParseInline(const json &json) {
+    if (json.contains("partOf")) {
+        auto arr = json["partOf"];
+        if (arr.is_array()) {
+            for (const auto &item: arr) {
+                if (item.is_object()) {
+                    auto ref = FhirReference::ParseObj(item);
+                    partOf.emplace_back(ref);
+                }
             }
         }
     }
-    if (json.has_array_field(as_wstring_on_win32("basedOn"))) {
-        auto arr = json.at(as_wstring_on_win32("basedOn")).as_array();
-        for (const auto &item : arr) {
-            if (item.is_object()) {
-                auto ref = FhirReference::Parse(item);
-                basedOn.emplace_back(ref);
+    if (json.contains("basedOn")) {
+        auto arr = json["basedOn"];
+        if (arr.is_array()) {
+            for (const auto &item: arr) {
+                if (item.is_object()) {
+                    auto ref = FhirReference::ParseObj(item);
+                    basedOn.emplace_back(ref);
+                }
             }
         }
     }

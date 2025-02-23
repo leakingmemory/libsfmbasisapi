@@ -9,6 +9,7 @@
 #include "value.h"
 
 class FhirPerson : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifiers{};
     std::vector<FhirAddress> address{};
@@ -32,8 +33,10 @@ public:
     void SetGender(const std::string &newGender) { gender = newGender; }
     void SetBirthDate(const std::string &newBirthDate) { birthDate = newBirthDate; }
     void SetActive(bool newActive) { active = newActive; }
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirPerson Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirPerson Parse(const json &obj);
+public:
     std::string GetDisplay() const override;
 };
 

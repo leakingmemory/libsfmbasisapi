@@ -15,8 +15,7 @@
 #include <fhir/fhirbasic.h>
 #include <fhir/allergy.h>
 #include <fhir/operationoutcome.h>
-
-#include "../win32/w32strings.h"
+#include "json.h"
 
 class FhirParseException : public std::exception {
 private:
@@ -30,16 +29,16 @@ const char *FhirParseException::what() const noexcept {
     return error.c_str();
 }
 
-std::shared_ptr<Fhir> Fhir::Parse(const web::json::value &obj) {
-    if (!obj.has_string_field(as_wstring_on_win32("resourceType"))) {
+std::shared_ptr<Fhir> Fhir::ParseObj(const json &obj) {
+    if (!obj.contains("resourceType")) {
         throw FhirParseException("No resourceType");
     }
-    auto resourceType = from_wstring_on_win32(obj.at(as_wstring_on_win32("resourceType")).as_string());
+    std::string resourceType = obj["resourceType"];
     if (resourceType == "Medication") {
-        return std::make_shared<FhirMedication>(FhirMedication::Parse(obj));
+        return std::make_shared<FhirMedication>(FhirMedication::ParseObj(obj));
     }
     if (resourceType == "MedicationStatement") {
-        return std::make_shared<FhirMedicationStatement>(FhirMedicationStatement::Parse(obj));
+        return std::make_shared<FhirMedicationStatement>(FhirMedicationStatement::ParseObj(obj));
     }
     if (resourceType == "Composition") {
         return std::make_shared<FhirComposition>(FhirComposition::Parse(obj));
@@ -57,10 +56,10 @@ std::shared_ptr<Fhir> Fhir::Parse(const web::json::value &obj) {
         return std::make_shared<FhirSubstance>(FhirSubstance::Parse(obj));
     }
     if (resourceType == "Bundle") {
-        return std::make_shared<FhirBundle>(FhirBundle::Parse(obj));
+        return std::make_shared<FhirBundle>(FhirBundle::ParseObj(obj));
     }
     if (resourceType == "Parameters") {
-        return std::make_shared<FhirParameters>(FhirParameters::Parse(obj));
+        return std::make_shared<FhirParameters>(FhirParameters::ParseObj(obj));
     }
     if (resourceType == "PractitionerRole") {
         return std::make_shared<FhirPractitionerRole>(FhirPractitionerRole::Parse(obj));
@@ -72,9 +71,13 @@ std::shared_ptr<Fhir> Fhir::Parse(const web::json::value &obj) {
         return std::make_shared<FhirAllergyIntolerance>(FhirAllergyIntolerance::Parse(obj));
     }
     if (resourceType == "OperationOutcome") {
-        return std::make_shared<FhirOperationOutcome>(FhirOperationOutcome::Parse(obj));
+        return std::make_shared<FhirOperationOutcome>(FhirOperationOutcome::ParseObj(obj));
     }
     std::string error{"Unknown resourceType: "};
     error.append(resourceType);
     throw FhirParseException(error);
+}
+
+std::shared_ptr<Fhir> Fhir::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
 }

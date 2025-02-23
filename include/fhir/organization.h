@@ -9,6 +9,7 @@
 #include "fhir.h"
 
 class FhirOrganization : public Fhir {
+    friend Fhir;
 private:
     std::vector<FhirIdentifier> identifiers{};
     std::string name{};
@@ -25,9 +26,10 @@ public:
     void SetName(const std::string &n) {
         name = n;
     }
-
-    [[nodiscard]] web::json::value ToJson() const;
-    static FhirOrganization Parse(const web::json::value &obj);
+protected:
+    [[nodiscard]] json ToJsonObj() const override;
+    static FhirOrganization Parse(const json &obj);
+public:
     std::string GetDisplay() const override;
 };
 

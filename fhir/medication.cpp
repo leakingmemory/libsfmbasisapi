@@ -3,60 +3,59 @@
 //
 
 #include <fhir/medication.h>
+#include "json.h"
 
-#include "../win32/w32strings.h"
-
-FhirIngredient FhirIngredient::Parse(const web::json::value &obj) {
+FhirIngredient FhirIngredient::Parse(const json &obj) {
     FhirIngredient ingredient{};
     if (!ingredient.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_object_field(as_wstring_on_win32("itemReference"))) {
-        ingredient.itemReference = FhirReference::Parse(obj.at(as_wstring_on_win32("itemReference")));
+    if (obj.contains("itemReference")) {
+        ingredient.itemReference = FhirReference::ParseObj(obj["itemReference"]);
     }
-    if (obj.has_boolean_field(as_wstring_on_win32("isActive"))) {
-        ingredient.isActive = obj.at(as_wstring_on_win32("isActive")).as_bool();
+    if (obj.contains("isActive")) {
+        ingredient.isActive = obj["isActive"];
     }
-    if (obj.has_object_field(as_wstring_on_win32("strength"))) {
-        ingredient.strength = FhirRatio::Parse(obj.at(as_wstring_on_win32("strength")));
+    if (obj.contains("strength")) {
+        ingredient.strength = FhirRatio::ParseObj(obj["strength"]);
     }
     return ingredient;
 }
 
-web::json::value FhirIngredient::ToJson() const {
-    web::json::value val = FhirExtendable::ToJson();
+json FhirIngredient::ToJsonObj() const {
+    auto val = FhirExtendable::ToJsonObj();
     if (itemReference.IsSet()) {
-        val[as_wstring_on_win32("itemReference")] = itemReference.ToJson();
+        val["itemReference"] = itemReference.ToJsonObj();
     }
-    val[as_wstring_on_win32("isActive")] = web::json::value::boolean(isActive);
+    val["isActive"] = isActive;
     if (strength.IsSet()) {
-        val[as_wstring_on_win32("strength")] = strength.ToJson();
+        val["strength"] = strength.ToJsonObj();
     }
     return val;
 }
 
-FhirMedication FhirMedication::Parse(const web::json::value &obj) {
+FhirMedication FhirMedication::ParseObj(const json &obj) {
     FhirMedication medication{};
     if (!medication.ParseInline(obj)) {
         throw std::exception();
     }
-    if (obj.has_field(as_wstring_on_win32("identifier"))) {
-        const auto arr = obj.at(as_wstring_on_win32("identifier")).as_array();
+    if (obj.contains("identifier") && obj["identifier"].is_array()) {
+        const auto arr = obj["identifier"];
         for (const auto &id : arr) {
-            medication.identifiers.push_back(FhirIdentifier::Parse(id));
+            medication.identifiers.push_back(FhirIdentifier::ParseObj(id));
         }
     }
-    if (obj.has_object_field(as_wstring_on_win32("code"))) {
-        medication.code = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("code")));
+    if (obj.contains("code") && obj["code"].is_object()) {
+        medication.code = FhirCodeableConcept::Parse(obj["code"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("form"))) {
-        medication.form = FhirCodeableConcept::Parse(obj.at(as_wstring_on_win32("form")));
+    if (obj.contains("form") && obj["form"].is_object()) {
+        medication.form = FhirCodeableConcept::Parse(obj["form"]);
     }
-    if (obj.has_object_field(as_wstring_on_win32("amount"))) {
-        medication.amount = FhirRatio::Parse(obj.at(as_wstring_on_win32("amount")));
+    if (obj.contains("amount") && obj["amount"].is_object()) {
+        medication.amount = FhirRatio::ParseObj(obj["amount"]);
     }
-    if (obj.has_array_field(as_wstring_on_win32("ingredient"))) {
-        for (const auto &ingredient : obj.at(as_wstring_on_win32("ingredient")).as_array()) {
+    if (obj.contains("ingredient") && obj["ingredient"].is_array()) {
+        for (const auto &ingredient : obj["ingredient"]) {
             medication.ingredients.emplace_back(FhirIngredient::Parse(ingredient));
         }
         medication.hasIngredients = true;
@@ -64,36 +63,36 @@ FhirMedication FhirMedication::Parse(const web::json::value &obj) {
     return medication;
 }
 
-web::json::value FhirMedication::ToJson() const {
-    web::json::value val = Fhir::ToJson();
-    val[as_wstring_on_win32("resourceType")] = web::json::value::string(as_wstring_on_win32("Medication"));
+FhirMedication FhirMedication::ParseJson(const std::string &str) {
+    return ParseObj(nlohmann::json::parse(str));
+}
+
+json FhirMedication::ToJsonObj() const {
+    auto val = Fhir::ToJsonObj();
+    val["resourceType"] = "Medication";
     if (!identifiers.empty()) {
-        auto arr = web::json::value::array(identifiers.size());
-#ifdef WIN32
+        auto arr = nlohmann::json::array();
         decltype(identifiers.size()) i = 0;
-#else
-        typeof(identifiers.size()) i = 0;
-#endif
         for (const auto &id : identifiers) {
-            arr[i++] = id.ToJson();
+            arr.push_back(id.ToJsonObj());
         }
-        val[as_wstring_on_win32("identifier")] = arr;
+        val["identifier"] = arr;
     }
     if (code.IsSet()) {
-        val[as_wstring_on_win32("code")] = code.ToJson();
+        val["code"] = code.ToJsonObj();
     }
     if (form.IsSet()) {
-        val[as_wstring_on_win32("form")] = form.ToJson();
+        val["form"] = form.ToJsonObj();
     }
     if (amount.IsSet()) {
-        val[as_wstring_on_win32("amount")] = amount.ToJson();
+        val["amount"] = amount.ToJsonObj();
     }
     if (hasIngredients) {
-        web::json::value ingArr = web::json::value::array(ingredients.size());
+        auto ingArr = nlohmann::json::array();
         for (size_t i = 0; i < ingredients.size(); i++) {
-            ingArr[i] = ingredients[i].ToJson();
+            ingArr.push_back(ingredients[i].ToJsonObj());
         }
-        val[as_wstring_on_win32("ingredient")] = ingArr;
+        val["ingredient"] = ingArr;
     }
     return val;
 }

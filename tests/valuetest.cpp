@@ -11,13 +11,13 @@ int main() {
     {
         auto input = FhirString("test");
         OfDynamicType<FhirString>(
-                FhirValue::Parse(input.GetPropertyName(), input.ToJson()),
+                FhirValue::ParseJson(input.GetPropertyName(), input.ToJson()),
                 [](const FhirString &str) {
                     AreEqual("test", str.GetValue());
                 });
     }
     {
-        auto coding = FhirCoding::Parse(FhirCoding("system", "code", "display").ToJson());
+        auto coding = FhirCoding::ParseJson(FhirCoding("system", "code", "display").ToJson());
         AreEqual("system", coding.GetSystem());
         AreEqual("code", coding.GetCode());
         AreEqual("display", coding.GetDisplay());
@@ -25,7 +25,7 @@ int main() {
     {
         auto input = FhirCodeableConceptValue({{"s0", "c0", "d0"}, {"s1", "c1", "d1"}});
         OfDynamicType<FhirCodeableConceptValue>(
-                FhirValue::Parse(input.GetPropertyName(), input.ToJson()),
+                FhirValue::ParseJson(input.GetPropertyName(), input.ToJson()),
                 [](const FhirCodeableConceptValue &cc) {
                     auto coding = cc.GetCoding();
                     AreEqual(2, coding.size());
@@ -43,7 +43,7 @@ int main() {
     {
         auto input = FhirCodeableConceptValue("text");
         OfDynamicType<FhirCodeableConceptValue>(
-                FhirValue::Parse(input.GetPropertyName(), input.ToJson()),
+                FhirValue::ParseJson(input.GetPropertyName(), input.ToJson()),
                 [](const FhirCodeableConceptValue &cc) {
                     auto coding = cc.GetCoding();
                     AreEqual(0, coding.size());
@@ -52,13 +52,13 @@ int main() {
     }
     {
         auto input = FhirQuantity(10.0, "mg");
-        auto output = FhirQuantity::Parse(input.ToJson());
+        auto output = FhirQuantity::ParseJson(input.ToJson());
         AreEqual(10, (((long) (output.GetValue() * ((double)10.0))) + 5) / 10);
         AreEqual("mg", output.GetUnit());
     }
     {
         auto input = FhirRatio(FhirQuantity(10.0, "mg"), FhirQuantity(80.0, "ml"));
-        auto output = FhirRatio::Parse(input.ToJson());
+        auto output = FhirRatio::ParseJson(input.ToJson());
         AreEqual(10, (((long) (output.GetNumerator().GetValue() * ((double)10.0))) + 5) / 10);
         AreEqual("mg", output.GetNumerator().GetUnit());
         AreEqual(80, (((long) (output.GetDenominator().GetValue() * ((double)10.0))) + 5) / 10);
@@ -66,33 +66,33 @@ int main() {
     }
     {
         auto input = FhirReference("testRef", "ReferenceType", "Reference Display");
-        auto output = FhirReference::Parse(input.ToJson());
+        auto output = FhirReference::ParseJson(input.ToJson());
         AreEqual("testRef", output.GetReference());
         AreEqual("ReferenceType", output.GetType());
         AreEqual("Reference Display", output.GetDisplay());
     }
     {
         auto input = FhirIdentifier(FhirCodeableConcept("text"), "use", "value");
-        auto output = FhirIdentifier::Parse(input.ToJson());
+        auto output = FhirIdentifier::ParseJson(input.ToJson());
         AreEqual("text", output.GetType().GetText());
         AreEqual("use", output.GetUse());
         AreEqual("value", output.GetValue());
     }
     {
         auto input = FhirDosage("text", 3);
-        auto output = FhirDosage::Parse(input.ToJson());
+        auto output = FhirDosage::ParseJson(input.ToJson());
         AreEqual("text", output.GetText());
         AreEqual(3, output.GetSequence());
     }
     {
         auto input = FhirLink("relation", "testRef");
-        auto output = FhirLink::Parse(input.ToJson());
+        auto output = FhirLink::ParseJson(input.ToJson());
         AreEqual("relation", output.GetRelation());
         AreEqual("testRef", output.GetUrl());
     }
     {
         auto input = FhirName("use", "familyName", "givenName");
-        auto output = FhirName::Parse(input.ToJson());
+        auto output = FhirName::ParseJson(input.ToJson());
         AreEqual("use", output.GetUse());
         AreEqual("familyName", output.GetFamily());
         AreEqual("givenName", output.GetGiven());
@@ -105,7 +105,7 @@ int main() {
     {
         auto input = std::make_shared<FhirString>("test");
         OfDynamicType<FhirValueExtension>(
-                FhirExtension::Parse(FhirValueExtension("string", input).ToJson()),
+                FhirExtension::ParseJson(FhirValueExtension("string", input).ToJson()),
                 [](const FhirValueExtension &ext) {
                     AreEqual("string", ext.GetUrl());
                     OfDynamicType<FhirString>(ext.GetValue(), [] (const FhirString &str) {
@@ -114,14 +114,14 @@ int main() {
                 });
     }
     {
-        auto coding = FhirCoding::Parse(FhirCoding("system", "code", "display").ToJson());
+        auto coding = FhirCoding::ParseJson(FhirCoding("system", "code", "display").ToJson());
         AreEqual("system", coding.GetSystem());
         AreEqual("code", coding.GetCode());
         AreEqual("display", coding.GetDisplay());
     }
     {
         auto input = std::make_shared<FhirCodeableConceptValue>(FhirCodeableConceptValue({{"s0", "c0", "d0"}, {"s1", "c1", "d1"}}));
-        OfDynamicType<FhirValueExtension>(FhirExtension::Parse(FhirValueExtension("cc", input).ToJson()), [] (const FhirValueExtension &ext) {
+        OfDynamicType<FhirValueExtension>(FhirExtension::ParseJson(FhirValueExtension("cc", input).ToJson()), [] (const FhirValueExtension &ext) {
             OfDynamicType<FhirCodeableConceptValue>(
                     ext.GetValue(),
                     [](const FhirCodeableConceptValue &cc) {
@@ -141,7 +141,7 @@ int main() {
     }
     {
         auto input = std::make_shared<FhirCodeableConceptValue>(FhirCodeableConceptValue("text"));
-        OfDynamicType<FhirValueExtension>(FhirExtension::Parse(FhirValueExtension("cc", input).ToJson()), [] (const FhirValueExtension &ext) {
+        OfDynamicType<FhirValueExtension>(FhirExtension::ParseJson(FhirValueExtension("cc", input).ToJson()), [] (const FhirValueExtension &ext) {
             OfDynamicType<FhirCodeableConceptValue>(
                     ext.GetValue(),
                     [](const FhirCodeableConceptValue &cc) {
