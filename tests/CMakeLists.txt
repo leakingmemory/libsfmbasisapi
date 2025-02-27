@@ -42,6 +42,7 @@ add_test(NAME ParseGetmedResp COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests
 add_test(NAME ParseGetmedResp2 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/getmedex1.json" response)
 add_test(NAME ParseGetmedResp3 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/getmedex2.json" response)
 add_test(NAME ParseGetmedCrash20240721 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/getmed-crash-20240721.json" response)
+add_test(NAME ParseGetmedSendmedCrash20250225 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/getmed-sendmedcrash-20250225.json" response)
 add_test(NAME ParseSendmedReq COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/requests/sendmed.json" sendmedrequest)
 add_test(NAME ParseSendmedResp COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/sendmed.json" sendmedresponse)
 add_test(NAME ParseSendmedResp2 COMMAND parseParameters "${CMAKE_SOURCE_DIR}/tests/data/nhnfhir/responses/sendmed2.json" sendmedresponse2)

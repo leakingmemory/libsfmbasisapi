@@ -10,7 +10,8 @@ json FhirParameter::ToJsonObj() const {
     auto obj = FhirObject::ToJsonObj();
     obj["name"] = name;
     if (resource) {
-        obj["resource"] = resource->ToJsonObj();
+        auto resourceJsonObj = resource->ToJsonObj();
+        obj["resource"] = static_cast<const nlohmann::json &>(resourceJsonObj);
     }
     if (value) {
         obj[value->GetPropertyName()] = value->ToJsonObj();
@@ -19,7 +20,8 @@ json FhirParameter::ToJsonObj() const {
         auto arr = nlohmann::json::array();
         int i = 0;
         for (const auto &p : part) {
-            arr.push_back(p->ToJsonObj());
+            auto partJsonObj = p->ToJsonObj();
+            arr.push_back(static_cast<const nlohmann::json &>(partJsonObj));
         }
         obj["part"] = arr;
     }

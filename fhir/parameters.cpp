@@ -22,7 +22,8 @@ json FhirParameters::ToJsonObj() const {
     auto arr = nlohmann::json::array();
     decltype(parameters.size()) i = 0;
     for (const auto &parameter : parameters) {
-        arr.push_back(parameter.ToJsonObj());
+        auto parameterJsonObj = parameter.ToJsonObj();
+        arr.push_back(static_cast<const nlohmann::json &>(parameterJsonObj));
     }
     obj["resourceType"] = "Parameters";
     obj["parameter"] = arr;

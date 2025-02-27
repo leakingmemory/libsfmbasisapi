@@ -36,7 +36,8 @@ json FhirBundle::ToJsonObj() const {
         auto arr = nlohmann::json::array();
         decltype(link.size()) i = 0;
         for (const auto &l : link) {
-            arr.push_back(l.ToJsonObj());
+            auto link = l.ToJsonObj();
+            arr.push_back(static_cast<const nlohmann::json &>(link));
         }
         obj["link"] = arr;
     }
@@ -44,7 +45,8 @@ json FhirBundle::ToJsonObj() const {
     auto arr = nlohmann::json::array();
     decltype(entries.size()) i = 0;
     for (const auto &e : entries) {
-        arr.push_back(e.ToJsonObj());
+        auto entry = e.ToJsonObj();
+        arr.push_back(static_cast<const nlohmann::json &>(entry));
     }
     obj["entry"] = arr;
     return obj;

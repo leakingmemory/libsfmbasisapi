@@ -60,19 +60,23 @@ FhirAttester FhirAttester::Parse(const json &obj) {
 json FhirComposition::ToJsonObj() const {
     auto obj = Fhir::ToJsonObj();
     if (identifier.IsSet()) {
-        obj["identifier"] = identifier.ToJsonObj();
+        auto ids = identifier.ToJsonObj();
+        obj["identifier"] = static_cast<const nlohmann::json &>(ids);
     }
     if (type.IsSet()) {
-        obj["type"] = type.ToJsonObj();
+        auto t = type.ToJsonObj();
+        obj["type"] = static_cast<const nlohmann::json &>(t);
     }
     if (subject.IsSet()) {
-        obj["subject"] = subject.ToJsonObj();
+        auto s = subject.ToJsonObj();
+        obj["subject"] = static_cast<const nlohmann::json &>(s);
     }
     if (!authors.empty()) {
         auto arr = nlohmann::json::array();
         decltype(authors.size()) i = 0;
         for (const auto &a : authors) {
-            arr.push_back(a.ToJsonObj());
+            auto ar = a.ToJsonObj();
+            arr.push_back(static_cast<const nlohmann::json &>(ar));
         }
         obj["author"] = arr;
     }
@@ -86,7 +90,8 @@ json FhirComposition::ToJsonObj() const {
         auto arr = nlohmann::json::array();
         decltype(sections.size()) i = 0;
         for (const auto &s : sections) {
-            arr.push_back(s.ToJsonObj());
+            auto sc = s.ToJsonObj();
+            arr.push_back(static_cast<const nlohmann::json &>(sc));
         }
         obj["section"] = arr;
     }
@@ -95,14 +100,16 @@ json FhirComposition::ToJsonObj() const {
         if (!relatesToCode.empty()) {
             rel["code"] = relatesToCode;
         }
-        rel["targetIdentifier"] = relatesTo.ToJsonObj();
+        auto ti = relatesTo.ToJsonObj();
+        rel["targetIdentifier"] = static_cast<const nlohmann::json &>(ti);
         obj["relatesTo"] = rel;
     }
     if (!attester.empty()) {
         auto att = nlohmann::json::array();
         decltype(attester.size()) j = 0;
         for (const auto &at: attester) {
-            att.push_back(at.ToJsonObj());
+            auto atj = at.ToJsonObj();
+            att.push_back(static_cast<const nlohmann::json &>(atj));
         }
         obj["attester"] = att;
     }

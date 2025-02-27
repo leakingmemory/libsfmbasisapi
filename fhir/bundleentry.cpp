@@ -13,7 +13,8 @@ json FhirBundleEntry::ToJsonObj() const {
         obj["fullUrl"] = fullUrl;
     }
     if (resource) {
-        obj["resource"] = resource->ToJsonObj();
+        auto res = resource->ToJsonObj();
+        obj["resource"] = static_cast<const nlohmann::json &>(res);
     }
     return obj;
 }
