@@ -69,6 +69,7 @@ class FhirPractitionerRole;
 class FhirReaction;
 class FhirAllergyIntolerance;
 class FhirOperationOutcome;
+class FhirMedicationDispense;
 
 class FhirCodeableConcept : public FhirExtendable {
     friend FhirIdentifier;
@@ -81,6 +82,7 @@ class FhirCodeableConcept : public FhirExtendable {
     friend FhirReaction;
     friend FhirAllergyIntolerance;
     friend FhirOperationOutcome;
+    friend FhirMedicationDispense;
 private:
     std::vector<FhirCoding> coding;
     std::string text;
@@ -147,9 +149,11 @@ public:
 };
 
 class FhirRatio;
+class FhirMedicationDispense;
 
 class FhirQuantity : public FhirObject {
     friend FhirRatio;
+    friend FhirMedicationDispense;
 private:
     std::string unit;
     long milliValue;
@@ -225,6 +229,7 @@ class FhirSubstance;
 class FhirOrganization;
 class FhirBasic;
 class FhirAllergyIntolerance;
+class FhirMedicationDispense;
 
 class FhirIdentifier : public FhirObject {
     friend FhirReference;
@@ -236,6 +241,7 @@ class FhirIdentifier : public FhirObject {
     friend FhirOrganization;
     friend FhirBasic;
     friend FhirAllergyIntolerance;
+    friend FhirMedicationDispense;
 private:
     FhirCodeableConcept type;
     std::string use;
@@ -289,6 +295,7 @@ class FhirComposition;
 class FhirBasic;
 class FhirPractitionerRole;
 class FhirPartOfChain;
+class FhirMedicationDispense;
 
 class FhirReference : public FhirValue {
     friend FhirIngredient;
@@ -301,6 +308,7 @@ class FhirReference : public FhirValue {
     friend FhirPractitionerRole;
     friend FhirAllergyIntolerance;
     friend FhirPartOfChain;
+    friend FhirMedicationDispense;
 private:
     FhirIdentifier identifier;
     std::string reference;

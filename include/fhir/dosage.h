@@ -8,9 +8,11 @@
 #include "fhirextendable.h"
 
 class FhirMedicationStatement;
+class FhirMedicationDispense;
 
 class FhirDosage : public FhirExtendable {
     friend FhirMedicationStatement;
+    friend FhirMedicationDispense;
 private:
     std::string text;
     int sequence;

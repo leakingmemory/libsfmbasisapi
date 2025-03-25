@@ -1,0 +1,774 @@
+{
+   "parameter" : [
+      {
+         "name" : "medication",
+         "resource" : {
+            "entry" : [
+               {
+                  "fullUrl" : "urn:uuid:da25556d-f93c-4889-a2b4-6f61d4c27d5a",
+                  "resource" : {
+                     "author" : [
+                        {
+                           "display" : "Jesper Odd Hansen, HPR: 7479654",
+                           "reference" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                           "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                        },
+                        {
+                           "display" : "HER: 8141719",
+                           "reference" : "urn:uuid:1ee78603-2d08-4991-8796-45cefee77234",
+                           "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Organization"
+                        }
+                     ],
+                     "confidentiality" : "N",
+                     "date" : "2024-02-07",
+                     "id" : "be485ea4-7afa-4484-8602-ef73c0f7fad5",
+                     "identifier" : {
+                        "use" : "official",
+                        "value" : "680f177e-0104-4528-9776-4a175bd81c5f"
+                     },
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationComposition"
+                        ]
+                     },
+                     "resourceType" : "Composition",
+                     "section" : [
+                        {
+                           "code" : {
+                              "coding" : [
+                                 {
+                                    "code" : "sectionMedication",
+                                    "display" : "List of Medication statements",
+                                    "system" : "http://ehelse.no/fhir/CodeSystem/sfm-section-types"
+                                 }
+                              ]
+                           },
+                           "entry" : [
+                             {
+                               "display": "Fluoridion sugetab 0,5 mg",
+                               "reference": "urn:uuid:a5dbc66b-27e5-4682-889f-4dea34b4e875",
+                               "type": "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationStatement"
+                             }
+                           ],
+                           "text" : {
+                              "div" : "<xhtml:div xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">List of medications</xhtml:div>",
+                              "status" : "generated"
+                           },
+                           "title" : "Medication"
+                        },
+                        {
+                           "code" : {
+                              "coding" : [
+                                 {
+                                    "code" : "sectionPLLinfo",
+                                    "display" : "PLL Info",
+                                    "system" : "http://ehelse.no/fhir/CodeSystem/sfm-section-types"
+                                 }
+                              ]
+                           },
+                           "entry" : [],
+                           "text" : {
+                              "div" : "<xhtml:div xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">Info read from M25</xhtml:div>",
+                              "status" : "generated"
+                           },
+                           "title" : "PllInfo"
+                        },
+                        {
+                           "code" : {
+                              "coding" : [
+                                 {
+                                    "code" : "sectionAllergies",
+                                    "display" : "Section allergies",
+                                    "system" : "http://ehelse.no/fhir/CodeSystem/sfm-section-types"
+                                 }
+                              ]
+                           },
+                           "entry" : [],
+                           "text" : {
+                              "div" : "<xhtml:div xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">List of allergies</xhtml:div>",
+                              "status" : "generated"
+                           },
+                           "title" : "Allergies"
+                        },
+                       {
+                         "code": {
+                           "coding": [
+                             {
+                               "code": "sectionDispense",
+                               "display": "Section dispense",
+                               "system": "http://ehelse.no/fhir/CodeSystem/sfm-section-types"
+                             }
+                           ]
+                         },
+                         "entry": [
+                           {
+                             "display": "sfm-MedicationDispense",
+                             "reference": "urn:uuid:b86ba8d9-38a4-4b25-b34d-1334e86a110a",
+                             "type": "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationDispense"
+                           }
+                         ],
+                         "text": {
+                           "div": "<xhtml:div xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">List of dispense messages</xhtml:div>",
+                           "status": "generated"
+                         },
+                         "title": "sectionDispense"
+                       },
+                        {
+                           "code" : {
+                              "coding" : [
+                                 {
+                                    "code" : "sectionOtherPrescriptions",
+                                    "display" : "List of non medical prescriptions",
+                                    "system" : "http://ehelse.no/fhir/CodeSystem/sfm-section-types"
+                                 }
+                              ]
+                           },
+                           "entry" : [],
+                           "text" : {
+                              "div" : "<xhtml:div xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">List of non medical prescriptions</xhtml:div>",
+                              "status" : "generated"
+                           },
+                           "title" : "Other Prescriptions"
+                        }
+                     ],
+                     "status" : "final",
+                     "subject" : {
+                        "display" : "Jeo 48 Test",
+                        "reference" : "urn:uuid:b509ff80-6fff-4164-834b-393c124220de",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Patient"
+                     },
+                     "title" : "Medication summary",
+                     "type" : {
+                        "coding" : [
+                           {
+                              "code" : "11503-0",
+                              "display" : "Medical records",
+                              "system" : "http://loinc.org"
+                           }
+                        ]
+                     }
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                  "resource" : {
+                     "active" : true,
+                     "birthDate" : "1982-04-23",
+                     "gender" : "female",
+                     "id" : "991955256",
+                     "identifier" : [
+                        {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.4",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "HPR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/HPR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "7479654"
+                        },
+                        {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.1",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "FNR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/FNR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "23048201385"
+                        }
+                     ],
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                        ]
+                     },
+                     "name" : [
+                        {
+                           "family" : "Hansen",
+                           "given" : [
+                              "Jesper Odd"
+                           ],
+                           "use" : "official"
+                        }
+                     ],
+                     "resourceType" : "Practitioner"
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:1ee78603-2d08-4991-8796-45cefee77234",
+                  "resource" : {
+                     "id" : "1123344536",
+                     "identifier" : [
+                        {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.2",
+                           "use" : "official",
+                           "value" : "8141719"
+                        }
+                     ],
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-Organization"
+                        ]
+                     },
+                     "name" : "DIPS-SFM Testsykehuset HF 2",
+                     "resourceType" : "Organization"
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:b509ff80-6fff-4164-834b-393c124220de",
+                  "resource" : {
+                     "active" : true,
+                     "address" : [
+                        {
+                           "city" : "FAUSKE",
+                           "postalCode" : "8200",
+                           "type" : "postal"
+                        }
+                     ],
+                     "birthDate" : "2001-12-06",
+                     "gender" : "male",
+                     "id" : "1388108324",
+                     "identifier" : [
+                        {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.1",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "FNR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/FNR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "06120182763"
+                        }
+                     ],
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-Patient"
+                        ]
+                     },
+                     "name" : [
+                        {
+                           "family" : "Test",
+                           "given" : [
+                              "Jeo 48"
+                           ]
+                        }
+                     ],
+                     "resourceType" : "Patient"
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:639a35c8-a7be-4225-bc32-2ce4d0163903",
+                  "resource" : {
+                     "code" : [
+                        {
+                           "coding" : [
+                              {
+                                 "code" : "R",
+                                 "display" : "Rekvirent",
+                                 "system" : "urn:oid:2.16.578.1.12.4.1.1.7490"
+                              }
+                           ]
+                        }
+                     ],
+                     "id" : "1199678476",
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-PractitionerRole"
+                        ]
+                     },
+                     "practitioner" : {
+                        "display" : "Jesper Odd Hansen, HPR: 7479654",
+                        "identifier" : {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.4",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "HPR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/HPR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "7479654"
+                        },
+                        "reference" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                     },
+                     "resourceType" : "PractitionerRole"
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:e9a067d8-2112-4d00-ae9d-f90b4f66a46d",
+                  "resource" : {
+                     "code" : [
+                        {
+                           "coding" : [
+                              {
+                                 "system" : "urn:oid:2.16.578.1.12.4.1.1.7490"
+                              }
+                           ],
+                           "text" : "PLL author"
+                        }
+                     ],
+                     "id" : "943647285",
+                     "meta" : {
+                        "profile" : [
+                           "http://ehelse.no/fhir/StructureDefinition/sfm-PractitionerRole"
+                        ]
+                     },
+                     "organization" : {
+                        "display" : "DIPS-SFM Testsykehuset HF 2, HER: 8141719",
+                        "identifier" : {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.2",
+                           "use" : "official",
+                           "value" : "8141719"
+                        },
+                        "reference" : "urn:uuid:1ee78603-2d08-4991-8796-45cefee77234",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Organization"
+                     },
+                     "practitioner" : {
+                        "display" : "Jesper Odd Hansen, HPR: 7479654",
+                        "identifier" : {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.4",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "HPR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/HPR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "7479654"
+                        },
+                        "reference" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                     },
+                     "resourceType" : "PractitionerRole"
+                  }
+               },
+               {
+                  "fullUrl" : "urn:uuid:08476c9b-90ad-4923-a08d-bce41192a60d",
+                  "resource" : {
+                     "code" : [
+                        {
+                           "coding" : [
+                              {
+                                 "code" : "LE",
+                                 "system" : "http://nhn.no/kj/fhir/CodeSystem/CategoriesOfHealthProfessionals"
+                              }
+                           ],
+                           "text" : "Lege"
+                        }
+                     ],
+                     "id" : "1960496114",
+                     "meta" : {
+                        "profile" : [
+                           "http://nhn.no/kj/fhir/StructureDefinition/KjPractitionerRole"
+                        ]
+                     },
+                     "organization" : {
+                        "display" : "DIPS-SFM Testsykehuset HF 2, HER: 8141719",
+                        "identifier" : {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.2",
+                           "use" : "official",
+                           "value" : "8141719"
+                        },
+                        "reference" : "urn:uuid:1ee78603-2d08-4991-8796-45cefee77234",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Organization"
+                     },
+                     "practitioner" : {
+                        "display" : "Jesper Odd Hansen, HPR: 7479654",
+                        "identifier" : {
+                           "system" : "urn:oid:2.16.578.1.12.4.1.4.4",
+                           "type" : {
+                              "coding" : [
+                                 {
+                                    "code" : "HPR-nummer",
+                                    "system" : "http://hl7.no/fhir/NamingSystem/HPR"
+                                 }
+                              ]
+                           },
+                           "use" : "official",
+                           "value" : "7479654"
+                        },
+                        "reference" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                        "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                     },
+                     "resourceType" : "PractitionerRole"
+                  }
+               },
+              {
+                "fullUrl": "urn:uuid:4ab0eb84-a2f5-45a5-a7b2-0aa631bede2e",
+                "resource": {
+                  "code": {
+                    "coding": [
+                      {
+                        "code": "ID_7C952A73-BCB2-40F5-BCD8-023E56D32827",
+                        "display": "Fluoridion sugetab 0,5 mg",
+                        "system": "http://ehelse.no/fhir/CodeSystem/FEST"
+                      },
+                      {
+                        "code": "A01AA01",
+                        "display": "Natriumfluorid",
+                        "system": "http://www.whocc.no/atc"
+                      }
+                    ]
+                  },
+                  "extension": [
+                    {
+                      "extension": [
+                        {
+                          "url": "prescriptiongroup",
+                          "valueCodeableConcept": {
+                            "coding": [
+                              {
+                                "code": "C",
+                                "display": "Reseptgruppe C",
+                                "system": "urn:oid:2.16.578.1.12.4.1.1.7421"
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "url": "http://hl7.no/fhir/StructureDefinition/no-basis-prescriptiongroup"
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "registreringstype",
+                          "valueCodeableConcept": {
+                            "coding": [
+                              {
+                                "code": "1",
+                                "display": "Legemiddelvirkestoff",
+                                "system": "http://ehelse.no/fhir/CodeSystem/sfm-festregistrationtype"
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "url": "http://ehelse.no/fhir/StructureDefinition/sfm-medicationdetails"
+                    }
+                  ],
+                  "form": {
+                    "coding": [
+                      {
+                        "code": "52",
+                        "display": "Sugetablett",
+                        "system": "urn:oid:2.16.578.1.12.4.1.1.7448"
+                      }
+                    ]
+                  },
+                  "id": "647429861",
+                  "identifier": [
+                    {
+                      "type": {
+                        "text": "identifier"
+                      },
+                      "use": "official",
+                      "value": "ID_7C952A73-BCB2-40F5-BCD8-023E56D32827"
+                    }
+                  ],
+                  "meta": {
+                    "profile": [
+                      "http://ehelse.no/fhir/StructureDefinition/sfm-Medication"
+                    ]
+                  },
+                  "resourceType": "Medication",
+                  "status": "active"
+                }
+              },
+                {
+                  "fullUrl": "urn:uuid:a5dbc66b-27e5-4682-889f-4dea34b4e875",
+                  "resource": {
+                    "dosage": [
+                      {
+                        "extension": [
+                          {
+                            "url": "http://ehelse.no/fhir/StructureDefinition/sfm-use",
+                            "valueCodeableConcept": {
+                              "coding": [
+                                {
+                                  "code": "1",
+                                  "display": "Fast",
+                                  "system": "urn:oid:2.16.578.1.12.4.1.1.9101"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "extension": [
+                              {
+                                "url": "text",
+                                "valueString": "BANANABSTINENS"
+                              }
+                            ],
+                            "url": "http://ehelse.no/fhir/StructureDefinition/sfm-application-area"
+                          }
+                        ],
+                        "sequence": 1,
+                        "text": "1 tablett morgen, 1 tablett formiddag, 1 tablett ettermiddag og 1 tablett kveld daglig"
+                      }
+                    ],
+                    "extension": [
+                      {
+                        "extension": [
+                        ],
+                        "url": "http://ehelse.no/fhir/StructureDefinition/sfm-reseptamendment"
+                      },
+                      {
+                        "url": "effectiveDateTime",
+                        "valueDate": "2024-04-04"
+                      },
+                      {
+                        "extension": [
+                          {
+                            "url": "status",
+                            "valueCodeableConcept": {
+                              "coding": [
+                                {
+                                  "code": "3",
+                                  "display": "Godkjent",
+                                  "system": "http://ehelse.no/fhir/CodeSystem/sfm-medicationstatement-registration-status"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "url": "type",
+                            "valueCodeableConcept": {
+                              "coding": [
+                                {
+                                  "code": "1",
+                                  "display": "Forskrevet av",
+                                  "system": "http://ehelse.no/fhir/CodeSystem/sfm-performer-roles"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "url": "provider",
+                            "valueReference": {
+                              "display" : "Jesper Odd Hansen, HPR: 7479654",
+                              "reference" : "urn:uuid:d13c539d-a4de-4093-9805-ceb278bdc308",
+                              "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Practitioner"
+                            }
+                          },
+                          {
+                            "url": "timestamp",
+                            "valueDateTime": "2024-04-04T09:06:40.158+02:00"
+                          }
+                        ],
+                        "url": "http://ehelse.no/fhir/StructureDefinition/sfm-regInfo"
+                      },
+                      {
+                        "extension": [
+                          {
+                            "url": "genericSubstitutionAccepted",
+                            "valueBoolean": true
+                          }
+                        ],
+                        "url": "http://ehelse.no/fhir/StructureDefinition/sfm-generic-substitution"
+                      },
+                      {
+                        "extension": [
+                          {
+                            "url": "mddispensed",
+                            "valueBoolean": true
+                          }
+                        ],
+                        "url": "http://ehelse.no/fhir/StructureDefinition/sfm-administration"
+                      }
+                    ],
+                    "id": "1154298990",
+                    "identifier": [
+                      {
+                        "type": {
+                          "text": "PLL"
+                        },
+                        "use": "usual",
+                        "value": "92f6e2b8-04cb-4804-9257-08dc49ce09ff"
+                      }
+                    ],
+                    "medicationReference": {
+                      "display": "Fluoridion sugetab 0,5 mg",
+                      "reference": "urn:uuid:4ab0eb84-a2f5-45a5-a7b2-0aa631bede2e",
+                      "type": "http://ehelse.no/fhir/StructureDefinition/sfm-Medication"
+                    },
+                    "meta": {
+                      "profile": [
+                        "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationStatement"
+                      ]
+                    },
+                    "resourceType": "MedicationStatement",
+                    "status": "active",
+                    "subject": {
+                      "display" : "Jeo 48 Test",
+                      "reference" : "urn:uuid:b509ff80-6fff-4164-834b-393c124220de",
+                      "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Patient"
+                    }
+                  }
+                },
+               {
+                 "fullUrl": "urn:uuid:b86ba8d9-38a4-4b25-b34d-1334e86a110a",
+                 "resource": {
+                   "authorizingPrescription": [
+                     {
+                       "display": "Fluoridion sugetab 0,5 mg",
+                       "reference": "urn:uuid:a5dbc66b-27e5-4682-889f-4dea34b4e875",
+                       "type": "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationStatement"
+                     }
+                   ],
+                   "dosageInstruction": [
+                     {
+                       "text": "1 tablett morgen, 1 tablett formiddag, 1 tablett ettermiddag og 1 tablett kveld daglig"
+                     }
+                   ],
+                   "extension": [
+                     {
+                       "extension": [
+                         {
+                           "url": "cancellation",
+                           "valueBoolean": false
+                         },
+                         {
+                           "url": "concluded",
+                           "valueBoolean": false
+                         },
+                         {
+                           "url": "substitutionreservationcustomer",
+                           "valueBoolean": false
+                         },
+                         {
+                           "url": "prescriptionid",
+                           "valueString": "00000000-0000-0000-0000-000000000000"
+                         }
+                       ],
+                       "url": "http://ehelse.no/fhir/StructureDefinition/sfm-dispenseinfo"
+                     }
+                   ],
+                   "id": "849793172",
+                   "medicationReference": {
+                     "display": "Flux sugetab med banansmak 0,5 mg",
+                     "reference": "urn:uuid:01670997-4744-4795-97ac-e6bf695132b8",
+                     "type": "http://ehelse.no/fhir/StructureDefinition/sfm-Medication"
+                   },
+                   "meta": {
+                     "profile": [
+                       "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationDispense"
+                     ]
+                   },
+                   "performer": [
+                     {
+                       "actor": {
+                         "display": "HER: 88715",
+                         "reference": "urn:uuid:da116faa-7cdc-4b35-8a73-cb226bd2e98b",
+                         "type": "http://ehelse.no/fhir/StructureDefinition/sfm-Organization"
+                       }
+                     }
+                   ],
+                   "quantity": {
+                     "value": 0.105
+                   },
+                   "resourceType": "MedicationDispense",
+                   "status": "completed",
+                   "subject": {
+                     "display" : "Jeo 48 Test",
+                     "reference" : "urn:uuid:b509ff80-6fff-4164-834b-393c124220de",
+                     "type" : "http://ehelse.no/fhir/StructureDefinition/sfm-Patient"
+                   },
+                   "whenHandedOver": "2024-12-19"
+                 }
+               }
+            ],
+            "id" : "efcc61fa-3bc2-4851-88ac-de471382c14d",
+            "link" : [
+               {
+                  "relation" : "self",
+                  "url" : "http://base-fhir.test2.forskrivning.no/patient/$getMedication"
+               }
+            ],
+            "meta" : {
+               "lastUpdated" : "2024-02-07T18:24:00.8740406+01:00",
+               "profile" : [
+                  "http://ehelse.no/fhir/StructureDefinition/sfm-MedicationBundle"
+               ],
+               "source" : "http://base-fhir.test2.forskrivning.no/Patient/$getMedication"
+            },
+            "resourceType" : "Bundle",
+            "timestamp" : "2024-02-07T18:24:00.8740365+01:00",
+            "total" : 23,
+            "type" : "document"
+         }
+      },
+      {
+         "name" : "KJHentetTidspunkt",
+         "valueDateTime" : "2024-02-07T18:24:00.7211344+01:00"
+      },
+      {
+         "name" : "RFHentetTidspunkt",
+         "valueDateTime" : "2024-02-07T18:24:00.659+01:00"
+      },
+      {
+         "name" : "KJFeilkode",
+         "valueCodeableConcept" : {
+            "coding" : [
+               {
+                  "code" : "5",
+                  "display" : "Ingen rettighet til KJ oppslag",
+                  "system" : "http://ehelse.no/fhir/CodeSystem/sfm-kj-rf-error-code"
+               }
+            ],
+            "text" : "Ingen rettighet til KJ oppslag"
+         }
+      },
+      {
+         "name" : "RFM96Feilkode",
+         "valueCodeableConcept" : {
+            "coding" : [
+               {
+                  "code" : "0",
+                  "display" : "OK",
+                  "system" : "http://ehelse.no/fhir/CodeSystem/sfm-kj-rf-error-code"
+               }
+            ]
+         }
+      },
+      {
+         "name" : "RFM912Feilkode",
+         "valueCodeableConcept" : {
+            "coding" : [
+               {
+                  "code" : "0",
+                  "display" : "OK",
+                  "system" : "http://ehelse.no/fhir/CodeSystem/sfm-kj-rf-error-code"
+               }
+            ]
+         }
+      },
+      {
+         "name" : "KJHarLegemidler",
+         "valueBoolean" : false
+      },
+      {
+         "name" : "KJHarLaste",
+         "valueBoolean" : false
+      },
+      {
+         "name" : "RFHarLaste",
+         "valueBoolean" : false
+      }
+   ],
+   "resourceType" : "Parameters"
+}
