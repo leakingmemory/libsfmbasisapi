@@ -20,6 +20,15 @@ std::shared_ptr<FhirString> FhirString::Parse(const json &value) {
     return std::make_shared<FhirString>(str);
 }
 
+std::string FhirCode::GetPropertyName() const {
+    return PropertyName();
+}
+
+std::shared_ptr<FhirCode> FhirCode::Parse(const json &value) {
+    std::string str = value;
+    return std::make_shared<FhirCode>(str);
+}
+
 std::shared_ptr<FhirValue> FhirValue::ParseObj(const std::string &propertyName, const json &property) {
     if (propertyName == FhirString::PropertyName()) {
         return FhirString::Parse(property);
@@ -50,6 +59,9 @@ std::shared_ptr<FhirValue> FhirValue::ParseObj(const std::string &propertyName, 
     }
     if (propertyName == FhirQuantityValue::PropertyName()) {
         return FhirQuantityValue::Parse(property);
+    }
+    if (propertyName == FhirCode::PropertyName()) {
+        return FhirCode::Parse(property);
     }
     throw FhirValueException(propertyName, "Value property not known");
 }

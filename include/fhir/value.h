@@ -29,6 +29,18 @@ public:
     }
 };
 
+class FhirCode : public FhirString {
+public:
+    LIBSFMBASISAPI_CONSTEXPR_STRING FhirCode() noexcept : FhirString() {}
+    explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirCode(const std::string &value) noexcept : FhirString(value) {}
+    explicit LIBSFMBASISAPI_CONSTEXPR_STRING FhirCode(std::string &&value) noexcept : FhirString(std::move(value)) {}
+    static std::string PropertyName() {
+        return "valueCode";
+    }
+    std::string GetPropertyName() const override;
+    static std::shared_ptr<FhirCode> Parse(const json &value);
+};
+
 class FhirCodeableConcept;
 
 class FhirCoding : public FhirObject {

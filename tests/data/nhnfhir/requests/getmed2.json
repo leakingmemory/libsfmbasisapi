@@ -1,0 +1,27 @@
+{
+  "resourceType":"Parameters",
+  "parameter":[
+    {
+      "name":"patient",
+      "resource": {
+        "resourceType":"Patient",
+        "meta":{"profile":["http://ehelse.no/fhir/StructureDefinition/sfm-Patient"]},
+        "identifier":[
+          {
+            "use":"official",
+            "type":{"coding":[{"system":"http://hl7.no/fhir/NamingSystem/FNR","code":"FNR-nummer"}]},
+            "system":"urn:oid:2.16.578.1.12.4.1.4.1",
+            "value":"22056322705"
+          }
+        ],
+        "active":true,
+        "name":[{"family":"Local","given":["1"]}],
+        "gender":"unknown",
+        "birthDate":"1963-05-22",
+        "address":[{"use":"home","type":"physical","city":"Fauske","postalCode":"8200"}]
+      }
+    },
+    {"name":"historyTimestamp","valueDateTime":"2022-05-23T00:00:00.0000000+02:00"},
+    {"name":"SamtykkeKjernejournal","valueCode":"HPUNNTAK"}
+  ]
+}
