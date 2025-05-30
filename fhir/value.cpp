@@ -172,7 +172,9 @@ std::string FhirCodeableConceptValue::ToJson() const {
 json FhirQuantity::ToJsonObj() const {
     auto obj = FhirObject::ToJsonObj();
     obj["value"] = GetValue();
-    obj["unit"] = unit;
+    if (!unit.empty()) {
+        obj["unit"] = unit;
+    }
     return obj;
 }
 
