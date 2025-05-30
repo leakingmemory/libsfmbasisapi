@@ -62,6 +62,9 @@ json FhirMedicationDispense::ToJsonObj() const {
         auto quant = quantity.ToJsonObj();
         obj["quantity"] = static_cast<const nlohmann::json &>(quant);
     }
+    if (!whenHandedOver.empty()) {
+        obj["whenHandedOver"] = whenHandedOver;
+    }
     return obj;
 }
 
@@ -87,6 +90,13 @@ FhirMedicationDispense FhirMedicationDispense::ParseObj(const json &obj) {
         auto arr = obj["dosageInstruction"];
         for (const auto &d : arr) {
             medDispense.dosageInstruction.push_back(FhirDosage::ParseObj(d));
+        }
+    }
+    if (obj.contains("authorizingPrescription")) {
+        auto arr = obj["authorizingPrescription"];
+        for (const auto &a : arr) {
+            auto ref = FhirReference::ParseObj(a);
+            medDispense.authorizingPrescription.emplace_back(std::move(ref));
         }
     }
     if (obj.contains("performer")) {
