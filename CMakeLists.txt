@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.27)
 project(libsfmbasisapi)
 
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CPPLEVEL 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -50,15 +52,15 @@ target_include_directories(sfmbasisapi PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(sfmbasisapi PRIVATE nhnfhir)
 
 install(TARGETS sfmbasisapi
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cpplevel.h"
-        DESTINATION include/sfmbasisapi/fhir)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sfmbasisapi/fhir)
 
-install(DIRECTORY include/ DESTINATION include/sfmbasisapi)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sfmbasisapi)
 
 enable_testing()
 add_subdirectory(tests)
